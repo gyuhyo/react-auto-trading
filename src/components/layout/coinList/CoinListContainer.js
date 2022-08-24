@@ -10,6 +10,7 @@ import {
 import React, { useCallback } from "react";
 import { useSelector } from "react-redux";
 import useCoinList from "../../../utils/hooks/useCoinList";
+import SubjectBar from "../SubjectBar";
 import CoinRow from "./CoinRow";
 
 function CoinListContainer() {
@@ -32,6 +33,7 @@ function CoinListContainer() {
       className="sticky top-[20px] flex-none min-w-[300px] max-w-[550px] h-[calc(100vh_-_110px)] bg-white"
       id="custom_scroll"
     >
+      <SubjectBar text="업비트 시세" />
       <Table stickyHeader size="small">
         <TableHead>
           <TableRow>
