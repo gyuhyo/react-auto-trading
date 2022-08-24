@@ -29,7 +29,7 @@ function CoinListContainer() {
     <TableContainer
       elevation={3}
       component={Paper}
-      className="flex-none min-w-[300px] max-w-[550px] h-[calc(100vh_-_110px)] bg-white"
+      className="sticky top-[20px] flex-none min-w-[300px] max-w-[550px] h-[calc(100vh_-_110px)] bg-white"
       id="custom_scroll"
     >
       <Table stickyHeader size="small">

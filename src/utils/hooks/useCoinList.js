@@ -5,6 +5,8 @@ import {
   GET_COIN_LIST,
   GET_REALTIME_DATA_ERROR,
   GET_REALTIME_DATA_SUCCESS,
+  GET_REALTIME_TRADE_DATA_ERROR,
+  GET_REALTIME_TRADE_DATA_SUCCESS,
 } from "../../store/reducers/coin";
 
 export default function useCoinList() {
@@ -39,6 +41,27 @@ export default function useCoinList() {
       ws.onerror = (e) => {
         // 실시간 데이터 수신 에러
         dispatch(GET_REALTIME_DATA_ERROR(e));
+      };
+
+      const trade = new WebSocket("wss://api.upbit.com/websocket/v1");
+      trade.onopen = () => {
+        // 웹소켓 연결
+        trade.send(
+          `[{"ticket":"test2"},{"type":"trade","codes": ${JSON.stringify(
+            marketList
+          )}}]`
+        );
+      };
+      trade.onmessage = async (e) => {
+        // 실시간 데이터 수신
+        const { data } = e;
+        const text = await new Response(data).text();
+        // console.log(JSON.parse(text));
+        dispatch(GET_REALTIME_TRADE_DATA_SUCCESS(JSON.parse(text)));
+      };
+      trade.onerror = (e) => {
+        // 실시간 데이터 수신 에러
+        dispatch(GET_REALTIME_TRADE_DATA_ERROR(e));
       };
     }
     handleGetCoinList();

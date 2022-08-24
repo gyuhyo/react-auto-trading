@@ -13,7 +13,6 @@ export default function Home() {
 
   useEffect(() => {
     router.push("/trading");
-    dispatch(CONNECT({ type: "ticker" }));
   }, [dispatch]);
 
   const count = useSelector((state) => state.counter.value);

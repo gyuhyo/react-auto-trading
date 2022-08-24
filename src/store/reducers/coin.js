@@ -12,6 +12,11 @@ const initialState = {
     data: null,
     error: null,
   },
+  realtimeTradeData: {
+    isLoad: false,
+    data: null,
+    error: null,
+  },
 };
 
 const coinSlice = createSlice({
@@ -52,6 +57,14 @@ const coinSlice = createSlice({
     GET_REALTIME_DATA_ERROR: (state, { payload: data }) => {
       state.realtimeData = { isLoad: false, data: null, error: data };
     },
+
+    GET_REALTIME_TRADE_DATA_SUCCESS: (state, { payload: data }) => {
+      state.realtimeTradeData.data = data;
+    },
+
+    GET_REALTIME_TRADE_DATA_ERROR: (state, { payload: data }) => {
+      state.realtimeTradeData = { isLoad: false, data: null, error: data };
+    },
   },
 });
 
@@ -59,5 +72,7 @@ export const {
   GET_COIN_LIST,
   GET_REALTIME_DATA_SUCCESS,
   GET_REALTIME_DATA_ERROR,
+  GET_REALTIME_TRADE_DATA_SUCCESS,
+  GET_REALTIME_TRADE_DATA_ERROR,
 } = coinSlice.actions;
 export const coinReducer = coinSlice.reducer;
