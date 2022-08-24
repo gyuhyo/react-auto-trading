@@ -13,9 +13,9 @@ function CoinRow({ data, name }) {
 
   const textColor = useCallback((change) => {
     if (change === "RISE") {
-      return "text-[#7999f1]";
+      return "text-[#245dd8]";
     } else if (change === "FALL") {
-      return "text-[#fc7093]";
+      return "text-[#d82424]";
     }
     return "";
   }, []);

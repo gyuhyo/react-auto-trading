@@ -36,7 +36,7 @@ function WhaleAlertRow({ data }) {
     <Alert variant="outlined" severity={changeAlert(usd)}>
       <p className="flex flex-cols gap-x-2 m-0 text-xs">
         <span className="font-bold">{time.toString()} : </span>
-        <span className="text-[#e68d45]">
+        <span className="text-[#1549f1]">
           {Number(price).toLocaleString("ko-kr")}
         </span>
         <span>{coin.toString().toUpperCase()}</span>
