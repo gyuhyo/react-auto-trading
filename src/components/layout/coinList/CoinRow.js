@@ -31,7 +31,7 @@ function CoinRow({ data, name }) {
 
   const fixPrice = useCallback((price) => {
     // 가격 단위 조정 함수
-    return parseInt(price.toFixed(0)).toLocaleString();
+    return Number(price.toFixed(2)).toLocaleString();
   }, []);
 
   return (

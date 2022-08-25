@@ -17,9 +17,11 @@ function MyApp({ Component, pageProps }) {
     <React.StrictMode>
       <Provider store={store}>
         <ThemeProvider theme={createTheme({ palette: { mode: "light" } })}>
+          {/*
           <ThemeProvider theme={createTheme({ palette: { mode: "dark" } })}>
             <TopBar />
           </ThemeProvider>
+  */}
           <div className="p-5">
             <motion.div
               variants={variants}

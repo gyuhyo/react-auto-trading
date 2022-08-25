@@ -7,16 +7,25 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import useCoinList from "../../../utils/hooks/useCoinList";
 import SubjectBar from "../SubjectBar";
 import CoinRow from "./CoinRow";
 
 function CoinListContainer() {
+  const [newArray, setNewArray] = useState([]);
   const realtimeData = useSelector((state) => state.coin.realtimeData.data);
   const markets = useSelector((state) => state.coin.market.data);
   useCoinList();
+
+  useEffect(() => {
+    const saveData = setTimeout(() => {
+      setNewArray(sortedData());
+    }, 300);
+
+    return () => clearTimeout(saveData);
+  }, [newArray]);
 
   let sortedData = useCallback(() => {
     let copyData = realtimeData && [...realtimeData];
@@ -30,10 +39,9 @@ function CoinListContainer() {
     <TableContainer
       elevation={3}
       component={Paper}
-      className="sticky top-[20px] flex-none min-w-[300px] max-w-[550px] h-[calc(100vh_-_110px)] bg-white"
+      className="max-h-[calc(100vh_-_110px)] overflow-y-auto"
       id="custom_scroll"
     >
-      <SubjectBar text="업비트 시세" />
       <Table stickyHeader size="small">
         <TableHead>
           <TableRow>
@@ -52,8 +60,8 @@ function CoinListContainer() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {sortedData() &&
-            sortedData().map((coin) => (
+          {newArray &&
+            newArray.map((coin) => (
               <CoinRow
                 key={coin?.code}
                 data={coin}

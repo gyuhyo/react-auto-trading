@@ -7,6 +7,7 @@ import {
   GET_REALTIME_DATA_SUCCESS,
   GET_REALTIME_TRADE_DATA_ERROR,
   GET_REALTIME_TRADE_DATA_SUCCESS,
+  GET_SUMMARY_DATA_SUCCESS,
 } from "../../store/reducers/coin";
 
 export default function useCoinList() {
@@ -58,6 +59,7 @@ export default function useCoinList() {
         const text = await new Response(data).text();
         // console.log(JSON.parse(text));
         dispatch(GET_REALTIME_TRADE_DATA_SUCCESS(JSON.parse(text)));
+        dispatch(GET_SUMMARY_DATA_SUCCESS(JSON.parse(text)));
       };
       trade.onerror = (e) => {
         // 실시간 데이터 수신 에러

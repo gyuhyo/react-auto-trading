@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { data } from "autoprefixer";
 import axios from "axios";
 
 const initialState = {
@@ -16,6 +17,9 @@ const initialState = {
     isLoad: false,
     data: null,
     error: null,
+  },
+  totalSummaryData: {
+    data: [],
   },
 };
 
@@ -65,6 +69,47 @@ const coinSlice = createSlice({
     GET_REALTIME_TRADE_DATA_ERROR: (state, { payload: data }) => {
       state.realtimeTradeData = { isLoad: false, data: null, error: data };
     },
+
+    GET_SUMMARY_DATA_SUCCESS: (state, { payload: data }) => {
+      const idx = state.totalSummaryData.data.findIndex(
+        (x) => x.code === data.code
+      );
+
+      if (idx >= 0) {
+        state.totalSummaryData.data[idx].cnt += 1;
+        state.totalSummaryData.data[idx].change = data.change;
+        state.totalSummaryData.data[idx].change_price = data.change_price;
+        state.totalSummaryData.data[idx].ask_cnt +=
+          data.ask_bid === "ASK" ? 1 : 0;
+        state.totalSummaryData.data[idx].bid_cnt +=
+          data.ask_bid === "BID" ? 1 : 0;
+        state.totalSummaryData.data[idx].total_price +=
+          data.trade_price * data.trade_volume;
+        state.totalSummaryData.data[idx].ask_price +=
+          data.ask_bid === "ASK" ? data.trade_price * data.trade_volume : 0;
+        state.totalSummaryData.data[idx].bid_price +=
+          data.ask_bid === "BID" ? data.trade_price * data.trade_volume : 0;
+      } else {
+        state.totalSummaryData.data.push({
+          code: data.code,
+          cnt: 1,
+          prev_closing_price: data.prev_closing_price,
+          change: data.change,
+          change_price: data.change_price,
+          ask_cnt: data.ask_bid === "ASK" ? 1 : 0,
+          bid_cnt: data.ask_bid === "BID" ? 1 : 0,
+          total_price: data.trade_price * data.trade_volume,
+          ask_price:
+            data.ask_bid === "ASK" ? data.trade_price * data.trade_volume : 0,
+          bid_price:
+            data.ask_bid === "BID" ? data.trade_price * data.trade_volume : 0,
+        });
+      }
+    },
+
+    CLEAR_SUMMARY_DATA: (state) => {
+      state.totalSummaryData.data = [];
+    },
   },
 });
 
@@ -74,5 +119,7 @@ export const {
   GET_REALTIME_DATA_ERROR,
   GET_REALTIME_TRADE_DATA_SUCCESS,
   GET_REALTIME_TRADE_DATA_ERROR,
+  GET_SUMMARY_DATA_SUCCESS,
+  CLEAR_SUMMARY_DATA,
 } = coinSlice.actions;
 export const coinReducer = coinSlice.reducer;
