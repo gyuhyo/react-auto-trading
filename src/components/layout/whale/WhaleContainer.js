@@ -112,7 +112,7 @@ function WhaleContainer() {
           matches
             ? "grid-cols-2"
             : "grid-cols-[repeat(auto-fill, minmax(0, 1fr))]"
-        } grid gap-5 max-h-[500px]`}
+        } grid gap-5 max-h-[336px]`}
       >
         <Paper>
           <SubjectBar text="ORDER BOOK" />
