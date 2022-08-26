@@ -5,12 +5,14 @@ import { useDispatch } from "react-redux";
 import CoinListContainer from "../../components/layout/coinList/CoinListContainer";
 import WhaleContainer from "../../components/layout/whale/WhaleContainer";
 import SubjectBar from "../../components/layout/SubjectBar";
+import useSocket from "../../utils/hooks/useSocket";
 
 function Index() {
   const dispatch = useDispatch();
   const [apiKey, secret] = useAuth();
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("sm"));
+  useSocket();
 
   return (
     <div className="flex flex-row flex-wrap gap-x-5 gap-y-5">

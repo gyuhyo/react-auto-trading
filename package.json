@@ -28,6 +28,7 @@
     "react-dom": "18.2.0",
     "react-icons": "^4.4.0",
     "react-redux": "^8.0.2",
+    "react-virtualized": "^9.22.3",
     "recoil-persist": "^4.2.0",
     "redux": "^4.2.0",
     "redux-saga": "^1.2.1",

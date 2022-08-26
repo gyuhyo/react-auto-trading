@@ -13,7 +13,7 @@ function UpbitWhaleAlertContainer() {
   useEffect(() => {
     if (
       realtimeData &&
-      realtimeData.trade_price * realtimeData.trade_volume > 50000000
+      realtimeData.trade_price * realtimeData.trade_volume > 10000000
     ) {
       setTrade(
         produce((draft) => {

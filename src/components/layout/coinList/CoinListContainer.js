@@ -17,7 +17,6 @@ function CoinListContainer() {
   const [newArray, setNewArray] = useState([]);
   const realtimeData = useSelector((state) => state.coin.realtimeData.data);
   const markets = useSelector((state) => state.coin.market.data);
-  useCoinList();
 
   useEffect(() => {
     const saveData = setTimeout(() => {

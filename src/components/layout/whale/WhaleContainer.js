@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import SubjectBar from "../SubjectBar";
+import OrderbookContainer from "./OrderbookContainer";
 import SummaryContainer from "./SummaryContainer";
 import UpbitWhaleAlertContainer from "./UpbitWhaleAlertContainer";
 import WhaleAlertContainer from "./WhaleAlertContainer";
@@ -114,8 +115,9 @@ function WhaleContainer() {
         } grid gap-5 max-h-[500px]`}
       >
         <Paper>
-          <SubjectBar text="Whale Alert 고래 알리미" />
-          <WhaleAlertContainer />
+          <SubjectBar text="ORDER BOOK" />
+          {/*<WhaleAlertContainer />*/}
+          <OrderbookContainer />
         </Paper>
         <Paper>
           <SubjectBar text="업비트 고래 알리미" />

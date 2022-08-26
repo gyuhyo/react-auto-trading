@@ -4,7 +4,7 @@ import React, { useCallback } from "react";
 function SummaryCard(props) {
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("sm"));
-  const { data, sorted, name } = props;
+  const { data, sorted, name, style } = props;
 
   const nowVol = useCallback((change, prev_closing_price, change_price) => {
     if (change === "RISE") {
@@ -42,6 +42,7 @@ function SummaryCard(props) {
       className={`${
         matches ? "basis-[20%]" : "basis-[100%]"
       } p-3 flex-1 bg-gradient-to-br from-[#fff] to-[#e6e6e6]`}
+      style={style}
     >
       <h5 className="m-2">
         {name} ({data.code}){" "}
