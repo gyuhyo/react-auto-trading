@@ -9,7 +9,8 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { CLEAR_SUMMARY_DATA } from "../../../store/reducers/coin";
 import SubjectBar from "../SubjectBar";
 import OrderbookContainer from "./OrderbookContainer";
@@ -34,6 +35,7 @@ const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
 }));
 
 function WhaleContainer() {
+  const dispatch = useDispatch();
   const [sorted, setSorted] = useState("total_cnt");
   const [clearTime, setClearTime] = useState(5);
   const theme = useTheme();
