@@ -13,7 +13,6 @@ function OrderbookRow({ data, name }) {
         %
       </span>
       <LinearProgress
-        color="secondary"
         variant="determinate"
         value={(total_ask_size / (total_ask_size + total_bid_size)) * 100}
         className="flex-1"
@@ -22,6 +21,7 @@ function OrderbookRow({ data, name }) {
         }}
       />
       <LinearProgress
+        color="secondary"
         variant="determinate"
         value={(total_bid_size / (total_ask_size + total_bid_size)) * 100}
         className="flex-1"
