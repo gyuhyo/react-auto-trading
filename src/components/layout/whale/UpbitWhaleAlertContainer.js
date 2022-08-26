@@ -37,7 +37,7 @@ function UpbitWhaleAlertContainer() {
   }, [trade]);
 
   return (
-    <div className="max-h-[500px] overflow-y-auto flex flex-col gap-y-2 p-3">
+    <div className="max-h-[336px] overflow-y-auto flex flex-col gap-y-2 p-3">
       {postWhaleUniqueData().map((data, index) => {
         return (
           <UpbitWhaleAlertRow
