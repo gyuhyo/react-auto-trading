@@ -2,7 +2,6 @@
   "name": "react-auto-trading",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://gyuhyo.github.io/react-auto-trading",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
