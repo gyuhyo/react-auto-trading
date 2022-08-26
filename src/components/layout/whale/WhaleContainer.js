@@ -10,6 +10,7 @@ import {
   useTheme,
 } from "@mui/material";
 import React, { useState } from "react";
+import { CLEAR_SUMMARY_DATA } from "../../../store/reducers/coin";
 import SubjectBar from "../SubjectBar";
 import OrderbookContainer from "./OrderbookContainer";
 import SummaryContainer from "./SummaryContainer";
@@ -37,6 +38,29 @@ function WhaleContainer() {
   const [clearTime, setClearTime] = useState(5);
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("sm"));
+
+  useEffect(() => {
+    const startClearTimer = setInterval(() => {
+      const date = new Date();
+      if (clearTime === 60) {
+        if (
+          Number(date.getMinutes()) === 0 &&
+          Number(date.getSeconds()) === 0
+        ) {
+          dispatch(CLEAR_SUMMARY_DATA());
+        }
+      } else {
+        if (
+          Number(date.getMinutes()) % clearTime === 0 &&
+          Number(date.getSeconds()) === 0
+        ) {
+          dispatch(CLEAR_SUMMARY_DATA());
+        }
+      }
+    }, 1000);
+
+    return () => clearInterval(startClearTimer);
+  }, [clearTime]);
 
   return (
     <div className="flex-1 grid grid-rows-2 auto-rows-[minmax(0, 0.5fr)] gap-y-5">
