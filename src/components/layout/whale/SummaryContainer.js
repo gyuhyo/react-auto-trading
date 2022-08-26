@@ -42,7 +42,7 @@ function SummaryContainer(props) {
     }
   }, [summaryData, sorted]);
   return (
-    <div className="z-0 p-3 flex flex-cols flex-wrap gap-3 max-h-[500px] overflow-y-auto">
+    <div className="z-0 p-3 flex flex-cols flex-wrap gap-3 max-h-[336px] overflow-y-auto">
       {newArray.length > 10
         ? newArray.map((data) => (
             <SummaryCard
