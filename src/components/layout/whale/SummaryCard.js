@@ -1,4 +1,10 @@
-import { Divider, Paper, useMediaQuery, useTheme } from "@mui/material";
+import {
+  Divider,
+  LinearProgress,
+  Paper,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import React, { useCallback } from "react";
 
 function SummaryCard(props) {
@@ -92,6 +98,37 @@ function SummaryCard(props) {
         >
           매도금액: {Number(data.ask_price.toFixed(0)).toLocaleString()}원
         </p>
+        <Divider />
+        <div className="flex flex-row justify-between items-center gap-y-4 m-[4px]">
+          <span className="mr-2">
+            {(
+              (data.ask_price / (data.ask_price + data.bid_price)) *
+              100
+            ).toFixed(0)}
+            %
+          </span>
+          <LinearProgress
+            color="secondary"
+            variant="determinate"
+            value={(data.ask_price / (data.ask_price + data.bid_price)) * 100}
+            className="flex-1"
+            style={{
+              transform: "scaleX(-1)",
+            }}
+          />
+          <LinearProgress
+            variant="determinate"
+            value={(data.bid_price / (data.ask_price + data.bid_price)) * 100}
+            className="flex-1"
+          />
+          <span className="ml-2">
+            {(
+              (data.bid_price / (data.ask_price + data.bid_price)) *
+              100
+            ).toFixed(0)}
+            %
+          </span>
+        </div>
       </div>
     </Paper>
   );
