@@ -45,7 +45,6 @@ export function cusAxios({ type, url, key, body = null }) {
       headers: {
         Authorization: getPayload(key, body),
         "Content-Type": `application/json`,
-        "Access-Control-Allow-Origin": "*",
       },
       json: {},
     });
