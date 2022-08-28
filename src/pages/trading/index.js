@@ -9,13 +9,13 @@ import useSocket from "../../utils/hooks/useSocket";
 
 function Index() {
   const dispatch = useDispatch();
-  const [apiKey, secret] = useAuth();
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("sm"));
   useSocket();
 
   return (
     <div className="flex flex-row flex-wrap gap-x-5 gap-y-5">
+      {/*
       <Paper
         className={`${
           matches ? "sticky top-[20px] flex-none" : ""
@@ -24,6 +24,7 @@ function Index() {
         <SubjectBar text="업비트 시세" />
         <CoinListContainer />
       </Paper>
+      */}
       <WhaleContainer />
     </div>
   );

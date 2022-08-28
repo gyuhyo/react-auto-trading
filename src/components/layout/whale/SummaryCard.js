@@ -46,8 +46,8 @@ function SummaryCard(props) {
     <Paper
       elevation={3}
       className={`${
-        matches ? "basis-[20%]" : "basis-[100%]"
-      } p-3 flex-1 bg-gradient-to-br from-[#fff] to-[#e6e6e6]`}
+        matches ? "basis-[15%]" : "basis-[100%]"
+      } p-3 flex-1 bg-gradient-to-br from-[#333333] to-[#383838]`}
       style={style}
     >
       <h5 className="m-2">

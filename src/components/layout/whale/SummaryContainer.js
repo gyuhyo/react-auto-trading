@@ -18,7 +18,7 @@ function SummaryContainer(props) {
   useEffect(() => {
     const saveData = setTimeout(() => {
       setNewArray(sortedSummaryData());
-    }, 300);
+    }, 500);
 
     return () => clearTimeout(saveData);
   }, [newArray]);
@@ -43,7 +43,7 @@ function SummaryContainer(props) {
   }, [summaryData, sorted]);
   return (
     <div className="z-0 p-3 flex flex-cols flex-wrap gap-3 max-h-[336px] overflow-y-auto">
-      {newArray.length > 10
+      {newArray.length > 12
         ? newArray.map((data) => (
             <SummaryCard
               sorted={sorted}
@@ -55,13 +55,13 @@ function SummaryContainer(props) {
               }
             />
           ))
-        : [0, 1, 2, 3, 4, 5, 6, 7].map((data) => (
+        : [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((data) => (
             <Skeleton
               key={data}
               elevation={3}
-              height={200}
+              height={239}
               variant="rounded"
-              className="p-3 flex-1 basis-[20%]"
+              className="p-3 flex-1 basis-[15%]"
             />
           ))}
     </div>

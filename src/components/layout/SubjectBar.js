@@ -44,7 +44,7 @@ export default function SubjectBar({ text }) {
           {text}
         </Typography>
 
-        {text === "업비트 시세" && todayData()}
+        {text === "실시간 체결 순위" && todayData()}
       </Toolbar>
     </AppBar>
   );

@@ -1,17 +1,44 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
-export default function useAuth() {
-  const GET_USER_AUTH = useSelector((state) => state.auth);
+const uuidv4 = require("uuidv4");
+const crypto = require("crypto");
+const sign = require("jsonwebtoken").sign;
+const queryEncode = require("querystring").encode;
 
-  const [auth, setAuth] = useState(GET_USER_AUTH);
+export default function useAuth(withParam, body = null) {
+  const [token, setToken] = useState(null);
+  const userAuth = useSelector((state) => state.user.auth);
 
   useEffect(() => {
-    if (!auth) {
-      const localStorageAuth = JSON.parse(localStorage.getItem("auth"));
-      setAuth(localStorageAuth);
+    if (!userAuth.apiKey || !userAuth.secret) {
+      return "Bearer null";
     }
+
+    if (withParam) {
+      const query = queryEncode(body);
+      const hash = crypto.createHash("sha512");
+      const queryHash = hash.update(query, "utf-8").digest("hex");
+
+      const payload = {
+        access_key: userAuth.apiKey,
+        nonce: uuidv4.uuid(),
+        query_hash: queryHash,
+        query_hash_alg: "SHA512",
+      };
+
+      setToken(sign(payload, userAuth.secret));
+    } else {
+      const payload = {
+        access_key: userAuth.apiKey,
+        nonce: uuidv4.uuid(),
+      };
+
+      setToken(sign(payload, userAuth.secret));
+    }
+
+    return `Bearer ${token}`;
   }, []);
 
-  return [auth?.apiKey, auth?.secret];
+  return `Bearer ${token}`;
 }

@@ -2,8 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   auth: {
-    apiKey: null,
-    secret: null,
+    apiKey: "",
+    secret: "",
   },
 };
 

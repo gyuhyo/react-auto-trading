@@ -1,5 +1,6 @@
 import "../styles/globals.css";
-import store from "../store/store";
+import { PersistGate } from "redux-persist/integration/react";
+import store, { persistor } from "../store/store";
 import { Provider, useDispatch } from "react-redux";
 import React, { useEffect } from "react";
 import TopBar from "../components/layout/TopBar";
@@ -16,24 +17,21 @@ function MyApp({ Component, pageProps }) {
   return (
     <React.StrictMode>
       <Provider store={store}>
-        <ThemeProvider theme={createTheme({ palette: { mode: "light" } })}>
-          {/*
+        <PersistGate loading={null} persistor={persistor}>
           <ThemeProvider theme={createTheme({ palette: { mode: "dark" } })}>
-            <TopBar />
+            <div className="p-5">
+              <motion.div
+                variants={variants}
+                initial="hidden"
+                animate="enter"
+                exit="exit"
+                transition={{ type: "linear" }}
+              >
+                <Component {...pageProps} />
+              </motion.div>
+            </div>
           </ThemeProvider>
-  */}
-          <div className="p-5">
-            <motion.div
-              variants={variants}
-              initial="hidden"
-              animate="enter"
-              exit="exit"
-              transition={{ type: "linear" }}
-            >
-              <Component {...pageProps} />
-            </motion.div>
-          </div>
-        </ThemeProvider>
+        </PersistGate>
       </Provider>
     </React.StrictMode>
   );

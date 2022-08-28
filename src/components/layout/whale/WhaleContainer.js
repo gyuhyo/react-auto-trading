@@ -12,6 +12,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { CLEAR_SUMMARY_DATA } from "../../../store/reducers/coin";
+import AutoTradingContainer from "../../trade/AutoTradingContainer";
 import SubjectBar from "../SubjectBar";
 import OrderbookContainer from "./OrderbookContainer";
 import SummaryContainer from "./SummaryContainer";
@@ -37,36 +38,38 @@ const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
 function WhaleContainer() {
   const dispatch = useDispatch();
   const [sorted, setSorted] = useState("total_cnt");
-  const [clearTime, setClearTime] = useState(5);
+  const [clearTime, setClearTime] = useState(60);
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("sm"));
 
   useEffect(() => {
     const startClearTimer = setInterval(() => {
-      const date = new Date();
-      if (clearTime === 60) {
-        if (
-          Number(date.getMinutes()) === 0 &&
-          Number(date.getSeconds()) === 0
-        ) {
-          dispatch(CLEAR_SUMMARY_DATA());
-        }
-      } else {
-        if (
-          Number(date.getMinutes()) % clearTime === 0 &&
-          Number(date.getSeconds()) === 0
-        ) {
-          dispatch(CLEAR_SUMMARY_DATA());
-        }
-      }
-    }, 1000);
+      dispatch(CLEAR_SUMMARY_DATA());
+
+      // const date = new Date();
+      // if (clearTime === 60) {
+      //   if (
+      //     Number(date.getMinutes()) === 0 &&
+      //     Number(date.getSeconds()) === 0
+      //   ) {
+      //     dispatch(CLEAR_SUMMARY_DATA());
+      //   }
+      // } else {
+      //   if (
+      //     Number(date.getMinutes()) % clearTime === 0 &&
+      //     Number(date.getSeconds()) === 0
+      //   ) {
+      //     dispatch(CLEAR_SUMMARY_DATA());
+      //   }
+      // }
+    }, 1000 * clearTime);
 
     return () => clearInterval(startClearTimer);
   }, [clearTime]);
 
   return (
     <div className="flex-1 grid grid-rows-2 auto-rows-[minmax(0, 0.5fr)] gap-y-5">
-      <Paper className="flex-1">
+      <Paper elevation={5} className="flex-1">
         <SubjectBar text="실시간 체결 순위" />
         <Paper
           elevation={3}
@@ -83,7 +86,7 @@ function WhaleContainer() {
             }}
             className="items-center pl-2"
           >
-            <Typography component="h5" className="text-sm font-bold pr-5">
+            <Typography component="h5" className="text-sm font-bold pr-5 pl-1">
               초기화 시간
             </Typography>
             <StyledToggleButtonGroup
@@ -94,12 +97,12 @@ function WhaleContainer() {
                 if (time !== null) setClearTime(time);
               }}
             >
-              <ToggleButton value={1}>1분</ToggleButton>
-              <ToggleButton value={3}>3분</ToggleButton>
-              <ToggleButton value={5}>5분</ToggleButton>
-              <ToggleButton value={10}>10분</ToggleButton>
-              <ToggleButton value={30}>30분</ToggleButton>
-              <ToggleButton value={60}>60분</ToggleButton>
+              <ToggleButton value={60}>1분</ToggleButton>
+              <ToggleButton value={180}>3분</ToggleButton>
+              <ToggleButton value={300}>5분</ToggleButton>
+              <ToggleButton value={600}>10분</ToggleButton>
+              <ToggleButton value={1800}>30분</ToggleButton>
+              <ToggleButton value={3600}>60분</ToggleButton>
             </StyledToggleButtonGroup>
           </Paper>
           <Paper
@@ -111,7 +114,7 @@ function WhaleContainer() {
             }}
             className="items-center pl-2"
           >
-            <Typography component="h5" className="text-sm font-bold pr-5">
+            <Typography component="h5" className="text-sm font-bold pr-5 pl-1">
               정렬순서
             </Typography>
             <StyledToggleButtonGroup
@@ -136,16 +139,21 @@ function WhaleContainer() {
       <div
         className={`${
           matches
-            ? "grid-cols-2"
+            ? "grid-cols-3"
             : "grid-cols-[repeat(auto-fill, minmax(0, 1fr))]"
         } grid gap-5 max-h-[336px]`}
       >
-        <Paper>
+        <Paper elevation={5}>
+          <SubjectBar text="AUTO TRADING" />
+          {/*<WhaleAlertContainer />*/}
+          <AutoTradingContainer />
+        </Paper>
+        <Paper elevation={5}>
           <SubjectBar text="ORDER BOOK" />
           {/*<WhaleAlertContainer />*/}
           <OrderbookContainer />
         </Paper>
-        <Paper>
+        <Paper elevation={5}>
           <SubjectBar text="업비트 고래 알리미" />
           <UpbitWhaleAlertContainer />
         </Paper>
