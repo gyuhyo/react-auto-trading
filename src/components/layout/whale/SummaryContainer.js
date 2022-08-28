@@ -17,7 +17,9 @@ function SummaryContainer(props) {
 
   useEffect(() => {
     const saveData = setTimeout(() => {
-      setNewArray(sortedSummaryData());
+      setNewArray(
+        sortedSummaryData().filter((data) => data.korean_name.includes(""))
+      );
     }, 500);
 
     return () => clearTimeout(saveData);
@@ -43,16 +45,13 @@ function SummaryContainer(props) {
   }, [summaryData, sorted]);
   return (
     <div className="z-0 p-3 flex flex-cols flex-wrap gap-3 max-h-[336px] overflow-y-auto">
-      {newArray.length > 12
+      {newArray.length > 6
         ? newArray.map((data) => (
             <SummaryCard
               sorted={sorted}
               key={data.code}
               data={data}
-              name={
-                markets.filter((list) => list.market === data.code)[0]
-                  .korean_name
-              }
+              name={data.korean_name}
             />
           ))
         : [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((data) => (

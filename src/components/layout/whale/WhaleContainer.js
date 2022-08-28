@@ -38,31 +38,31 @@ const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
 function WhaleContainer() {
   const dispatch = useDispatch();
   const [sorted, setSorted] = useState("total_cnt");
-  const [clearTime, setClearTime] = useState(60);
+  const [clearTime, setClearTime] = useState(1);
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("sm"));
 
   useEffect(() => {
     const startClearTimer = setInterval(() => {
-      dispatch(CLEAR_SUMMARY_DATA());
+      //dispatch(CLEAR_SUMMARY_DATA());
 
-      // const date = new Date();
-      // if (clearTime === 60) {
-      //   if (
-      //     Number(date.getMinutes()) === 0 &&
-      //     Number(date.getSeconds()) === 0
-      //   ) {
-      //     dispatch(CLEAR_SUMMARY_DATA());
-      //   }
-      // } else {
-      //   if (
-      //     Number(date.getMinutes()) % clearTime === 0 &&
-      //     Number(date.getSeconds()) === 0
-      //   ) {
-      //     dispatch(CLEAR_SUMMARY_DATA());
-      //   }
-      // }
-    }, 1000 * clearTime);
+      const date = new Date();
+      if (clearTime === 60) {
+        if (
+          Number(date.getMinutes()) === 0 &&
+          Number(date.getSeconds()) === 0
+        ) {
+          dispatch(CLEAR_SUMMARY_DATA());
+        }
+      } else {
+        if (
+          Number(date.getMinutes()) % clearTime === 0 &&
+          Number(date.getSeconds()) === 0
+        ) {
+          dispatch(CLEAR_SUMMARY_DATA());
+        }
+      }
+    }, 1000);
 
     return () => clearInterval(startClearTimer);
   }, [clearTime]);
@@ -97,12 +97,12 @@ function WhaleContainer() {
                 if (time !== null) setClearTime(time);
               }}
             >
-              <ToggleButton value={60}>1분</ToggleButton>
-              <ToggleButton value={180}>3분</ToggleButton>
-              <ToggleButton value={300}>5분</ToggleButton>
-              <ToggleButton value={600}>10분</ToggleButton>
-              <ToggleButton value={1800}>30분</ToggleButton>
-              <ToggleButton value={3600}>60분</ToggleButton>
+              <ToggleButton value={1}>1분</ToggleButton>
+              <ToggleButton value={3}>3분</ToggleButton>
+              <ToggleButton value={5}>5분</ToggleButton>
+              <ToggleButton value={10}>10분</ToggleButton>
+              <ToggleButton value={30}>30분</ToggleButton>
+              <ToggleButton value={60}>60분</ToggleButton>
             </StyledToggleButtonGroup>
           </Paper>
           <Paper

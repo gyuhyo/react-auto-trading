@@ -6,6 +6,7 @@ import CoinListContainer from "../../components/layout/coinList/CoinListContaine
 import WhaleContainer from "../../components/layout/whale/WhaleContainer";
 import SubjectBar from "../../components/layout/SubjectBar";
 import useSocket from "../../utils/hooks/useSocket";
+import { cusAxios } from "../../utils/hooks/common/cusAxios";
 
 function Index() {
   const dispatch = useDispatch();
@@ -13,6 +14,17 @@ function Index() {
   const matches = useMediaQuery(theme.breakpoints.up("sm"));
   useSocket();
 
+  useEffect(() => {
+    const param = {
+      type: "get",
+      url: "/accounts",
+      key: {
+        apiKey: "VnoQQa49yi0o39ve4nnlRMGWVauAHrP5jRMYkars",
+        secret: "wIUq0ROHbT50HCKDFgBvd2bf96GOqvjXd7PQzsOE",
+      },
+    };
+    cusAxios(param);
+  }, []);
   return (
     <div className="flex flex-row flex-wrap gap-x-5 gap-y-5">
       {/*
