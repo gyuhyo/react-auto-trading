@@ -23,6 +23,7 @@
     "lodash": "^4.17.21",
     "net": "^1.0.2",
     "next": "12.2.5",
+    "next-http-proxy-middleware": "^1.2.4",
     "notistack": "^2.0.5",
     "postcss": "^8.4.16",
     "querystring": "^0.2.1",

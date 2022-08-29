@@ -1,11 +1,12 @@
 import axios from "axios";
+import { request } from "https";
 
 const { v4: uuidv4 } = require("uuid");
 const crypto = require("crypto");
 const sign = require("jsonwebtoken").sign;
 const queryEncode = require("querystring").encode;
 
-function getPayload(key, body) {
+function getToken(key, body) {
   let payload = null;
 
   if (body) {
@@ -40,17 +41,23 @@ export function cusAxios({ type, url, key, body = null }) {
     return null;
   }
 
-  async function initAxios() {
-    const response = await axios.get("https://api.upbit.com/v1" + url, {
-      headers: {
-        Authorization: getPayload(key, body),
-        "Content-Type": `application/json`,
-      },
-      json: {},
+  const options = {
+    method: type,
+    url: "/api/v1" + url,
+    headers: {
+      Authorization: getToken(key, body),
+      Accept: `application/json`,
+    },
+  };
+
+  axios
+    .request(options)
+    .then(function (response) {
+      console.log(response.data);
+    })
+    .catch(function (error) {
+      console.error(error);
     });
 
-    console.log(response);
-  }
-
-  return initAxios();
+  return null;
 }

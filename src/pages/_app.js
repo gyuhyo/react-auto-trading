@@ -1,4 +1,5 @@
 import "../styles/globals.css";
+import Head from "next/head";
 import { PersistGate } from "redux-persist/integration/react";
 import store, { persistor } from "../store/store";
 import { Provider, useDispatch } from "react-redux";
@@ -16,6 +17,9 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <React.StrictMode>
+      <Head>
+        <title>Mr.Park - WHALE ALERT</title>
+      </Head>
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <ThemeProvider theme={createTheme({ palette: { mode: "dark" } })}>

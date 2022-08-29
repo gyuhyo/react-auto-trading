@@ -6,7 +6,6 @@ export default function document() {
     <Html>
       <Head>
         <base href="/" />
-        <title>Mr.Park - WHALE ALERT</title>
       </Head>
       <body>
         <Main />

@@ -16,7 +16,7 @@ function Index() {
 
   useEffect(() => {
     const param = {
-      type: "get",
+      type: "GET",
       url: "/accounts",
       key: {
         apiKey: "VnoQQa49yi0o39ve4nnlRMGWVauAHrP5jRMYkars",
