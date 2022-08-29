@@ -92,9 +92,18 @@ function SearchTradeCoin() {
     }
 
     if (Number(date.getSeconds()) === 20) {
+      const standardCnt =
+        (tradeCoin
+          .map((item) => item.cnt)
+          .reduce((prev, curr) => prev + curr, 0) *
+          30) /
+        tradeCoin.length;
+      console.log(standardCnt);
+
       const searchCoins = tradeCoin.filter(
         (data) =>
-          data.cnt > 300 && (data.bid_price / data.total_price) * 100 > 70
+          data.cnt > standardCnt &&
+          (data.bid_price / data.total_price) * 100 > 70
       );
 
       searchCoins.forEach((data) => {
