@@ -6,15 +6,14 @@ const crypto = require("crypto");
 const sign = require("jsonwebtoken").sign;
 const queryEncode = require("querystring").encode;
 
-function getToken(key, body) {
+export function getToken(key, body = null) {
   let payload = null;
 
   if (body) {
     const query = queryEncode(body);
+    console.log(query);
     const hash = crypto.createHash("sha512");
     const queryHash = hash.update(query, "utf-8").digest("hex");
-
-    console.log(key);
 
     payload = {
       access_key: key.apiKey,
@@ -22,9 +21,9 @@ function getToken(key, body) {
       query_hash: queryHash,
       query_hash_alg: "SHA512",
     };
-  } else {
-    console.log(key);
 
+    console.log(payload);
+  } else {
     payload = {
       access_key: key.apiKey,
       nonce: uuidv4(),
@@ -43,7 +42,7 @@ export function cusAxios({ type, url, key, body = null }) {
 
   const options = {
     method: type,
-    url: "/api/v1" + url,
+    url: "/api" + url,
     headers: {
       Authorization: getToken(key, body),
       Accept: `application/json`,
@@ -53,11 +52,32 @@ export function cusAxios({ type, url, key, body = null }) {
   axios
     .request(options)
     .then(function (response) {
-      console.log(response.data);
+      return response.data;
     })
     .catch(function (error) {
       console.error(error);
     });
 
   return null;
+}
+
+export function cusMyWallet({ key }) {
+  if (!key.apiKey || !key.secret) {
+    return null;
+  }
+
+  async function Call() {
+    const response = await axios.get("/api/v1/accounts", {
+      headers: {
+        Authorization: getToken(key),
+        Accept: `application/json`,
+      },
+    });
+
+    return response;
+  }
+
+  Call().then(({ data }) => {
+    return data;
+  });
 }

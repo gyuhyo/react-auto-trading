@@ -157,6 +157,61 @@ const coinSlice = createSlice({
           });
         }
       });
+
+      datas.forEach((elem) => {
+        const data = JSON.parse(elem);
+
+        const idx = state.autoTradeData.data.findIndex(
+          (x) => x.code === data.code
+        );
+
+        if (idx >= 0) {
+          const subIdx = state.autoTradeData.data[idx].realData.findIndex(
+            (x) => x.code === data.code
+          );
+          if (subIdx >= 0) {
+            state.autoTradeData.data[idx].realData[subIdx].cnt += 1;
+            state.autoTradeData.data[idx].realData[subIdx].change = data.change;
+            state.autoTradeData.data[idx].realData[subIdx].change_price =
+              data.change_price;
+            state.autoTradeData.data[idx].realData[subIdx].ask_cnt +=
+              data.ask_bid === "ASK" ? 1 : 0;
+            state.autoTradeData.data[idx].realData[subIdx].bid_cnt +=
+              data.ask_bid === "BID" ? 1 : 0;
+            state.autoTradeData.data[idx].realData[subIdx].total_price +=
+              data.trade_price * data.trade_volume;
+            state.autoTradeData.data[idx].realData[subIdx].ask_price +=
+              data.ask_bid === "ASK" ? data.trade_price * data.trade_volume : 0;
+            state.autoTradeData.data[idx].realData[subIdx].bid_price +=
+              data.ask_bid === "BID" ? data.trade_price * data.trade_volume : 0;
+            state.autoTradeData.data[idx].realData[subIdx].prev_cnt =
+              state.autoTradeData.data[idx].realData[subIdx].cnt;
+          } else {
+            state.autoTradeData.data[idx].realData.push({
+              code: data.code,
+              korean_name: state.market.data.filter(
+                (list) => list.market === data.code
+              )[0].korean_name,
+              cnt: 1,
+              prev_closing_price: data.prev_closing_price,
+              change: data.change,
+              change_price: data.change_price,
+              ask_cnt: data.ask_bid === "ASK" ? 1 : 0,
+              bid_cnt: data.ask_bid === "BID" ? 1 : 0,
+              total_price: data.trade_price * data.trade_volume,
+              ask_price:
+                data.ask_bid === "ASK"
+                  ? data.trade_price * data.trade_volume
+                  : 0,
+              bid_price:
+                data.ask_bid === "BID"
+                  ? data.trade_price * data.trade_volume
+                  : 0,
+              prev_cnt: 0,
+            });
+          }
+        }
+      });
     },
 
     GET_REALTIME_TRADE_DATA_ERROR: (state, { payload: data }) => {
@@ -184,6 +239,26 @@ const coinSlice = createSlice({
         }
       });
     },
+
+    ADD_AUTO_TRADE_DATA: (state, { payload: datas }) => {
+      state.autoTradeData.data.push(datas);
+    },
+
+    CLEAR_AUTO_TRADE_DATA: (state) => {
+      state.autoTradeData.data = [];
+    },
+
+    CLEAR_AUTO_TRADE_REAL_DATA: (state) => {
+      state.autoTradeData.data.forEach((data) => {
+        data.realData = [];
+      });
+    },
+
+    REMOVE_AUTO_TRADE_DATA: (state, { payload: data }) => {
+      state.autoTradeData.data = state.autoTradeData.data.filter(
+        (x) => x.code !== data.code
+      );
+    },
   },
 });
 
@@ -196,5 +271,9 @@ export const {
   CLEAR_SUMMARY_DATA,
   GET_REALTIME_ORDERBOOK_SUCCESS,
   CLEAR_AUTO_TRADE_SUMMARY_DATA,
+  ADD_AUTO_TRADE_DATA,
+  CLEAR_AUTO_TRADE_DATA,
+  CLEAR_AUTO_TRADE_REAL_DATA,
+  REMOVE_AUTO_TRADE_DATA,
 } = coinSlice.actions;
 export const coinReducer = coinSlice.reducer;

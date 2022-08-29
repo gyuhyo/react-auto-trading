@@ -6,7 +6,12 @@ import CoinListContainer from "../../components/layout/coinList/CoinListContaine
 import WhaleContainer from "../../components/layout/whale/WhaleContainer";
 import SubjectBar from "../../components/layout/SubjectBar";
 import useSocket from "../../utils/hooks/useSocket";
-import { cusAxios } from "../../utils/hooks/common/cusAxios";
+import {
+  cusAxios,
+  cusMyWallet,
+  getToken,
+} from "../../utils/hooks/common/cusAxios";
+import axios from "axios";
 
 function Index() {
   const dispatch = useDispatch();
@@ -16,14 +21,23 @@ function Index() {
 
   useEffect(() => {
     const param = {
-      type: "GET",
-      url: "/accounts",
       key: {
         apiKey: "VnoQQa49yi0o39ve4nnlRMGWVauAHrP5jRMYkars",
         secret: "wIUq0ROHbT50HCKDFgBvd2bf96GOqvjXd7PQzsOE",
       },
     };
-    cusAxios(param);
+
+    async function Call() {
+      const response = await axios.get("/api/v1/accounts", {
+        headers: {
+          Authorization: getToken(param.key),
+          Accept: `application/json`,
+        },
+      });
+      console.log(response.data);
+    }
+
+    Call();
   }, []);
   return (
     <div className="flex flex-row flex-wrap gap-x-5 gap-y-5">
