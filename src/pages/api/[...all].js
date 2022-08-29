@@ -5,17 +5,14 @@ export const config = {
     externalResolver: true,
   },
 };
-export default (req, res) => (
-    isDevelopment ?
-        httpProxyMiddleware(req, res, {
-            target: "https://api.upbit.com",
-            changeOrigin: true,
-            pathRewrite: [
-            {
-                patternStr: "^/api",
-                replaceStr: "",
-            },
-            ],
-        })
-        :
-)
+export default (req, res) =>
+  httpProxyMiddleware(req, res, {
+    target: "https://api.upbit.com",
+    changeOrigin: true,
+    pathRewrite: [
+      {
+        patternStr: "^/api",
+        replaceStr: "",
+      },
+    ],
+  });
