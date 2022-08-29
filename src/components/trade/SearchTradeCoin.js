@@ -91,10 +91,10 @@ function SearchTradeCoin() {
       setSearchOpened(true);
     }
 
-    if (Number(date.getSeconds()) === 30) {
+    if (Number(date.getSeconds()) === 20) {
       const searchCoins = tradeCoin.filter(
         (data) =>
-          data.cnt > 200 && (data.bid_price / data.total_price) * 100 > 70
+          data.cnt > 300 && (data.bid_price / data.total_price) * 100 > 70
       );
 
       searchCoins.forEach((data) => {
