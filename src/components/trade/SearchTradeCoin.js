@@ -141,7 +141,7 @@ function SearchTradeCoin() {
         (tradeCoin
           .map((item) => item.cnt)
           .reduce((prev, curr) => prev + curr, 0) *
-          30) /
+          20) /
         (tradeCoin.length * 2);
       console.log(standardCnt);
 
