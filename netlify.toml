@@ -1,0 +1,4 @@
+[[redirects]]
+  from = "/api/*"
+  to = "https://api.upbit.com/:splat"
+  status = 200
