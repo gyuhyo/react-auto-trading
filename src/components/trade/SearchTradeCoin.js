@@ -25,7 +25,52 @@ function SearchTradeCoin() {
   const autoTradeData = useSelector((state) => state.coin.autoTradeData.data);
 
   useEffect(() => {
-    console.log(1);
+    const param = {
+      key: {
+        apiKey: "VnoQQa49yi0o39ve4nnlRMGWVauAHrP5jRMYkars",
+        secret: "wIUq0ROHbT50HCKDFgBvd2bf96GOqvjXd7PQzsOE",
+      },
+    };
+
+    async function Call() {
+      const response = await axios.get("/api/v1/orders", {
+        headers: {
+          Authorization: getToken(param.key),
+          Accept: `application/json`,
+        },
+      });
+
+      response.data
+        .filter((x) => x.state === "wait")
+        .forEach((coin) => {
+          const body = {
+            uuid: coin.uuid,
+          };
+
+          const options = {
+            method: "DELETE",
+            url: "/api/v1/order",
+            headers: {
+              Accept: `application/json; charset=utf-8`,
+              "Content-Type": "application/json; charset=utf-8",
+              Authorization: getToken(param.key, body),
+            },
+            data: body,
+          };
+
+          new Promise((resolve, reject) => {
+            axios
+              .request(options)
+              .then(function (response) {
+                dispatch(REMOVE_AUTO_TRADE_DATA({ code: coin.uuid }));
+              })
+              .catch(function (error) {});
+          });
+        });
+    }
+
+    Call();
+
     dispatch(CLEAR_AUTO_TRADE_DATA());
   }, []);
 
