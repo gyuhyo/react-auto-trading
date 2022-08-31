@@ -2,18 +2,10 @@ import { Collapse, LinearProgress, Paper, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import InfoIcon from "@mui/icons-material/Info";
 import { useSelector, useDispatch, shallowEqual } from "react-redux";
-import {
-  ADD_AUTO_TRADE_DATA,
-  CLEAR_AUTO_TRADE_DATA,
-  CLEAR_AUTO_TRADE_REAL_DATA,
-  CLEAR_AUTO_TRADE_SUMMARY_DATA,
-  REMOVE_AUTO_TRADE_DATA,
-} from "../../store/reducers/coin";
 import useInterval from "../../utils/hooks/useInterval";
 import { cusAxios, getToken } from "../../utils/hooks/common/cusAxios";
 import axios from "axios";
 import request from "request";
-import { verify } from "crypto";
 import searchCoin from "../../utils/hooks/common/searchCoin";
 import ordersCoin from "../../utils/hooks/common/ordersCoin";
 const key = {

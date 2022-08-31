@@ -112,7 +112,7 @@ const coinSlice = createSlice({
           });
         }
       });
-
+      /*
       datas.forEach((elem) => {
         const data = JSON.parse(elem);
 
@@ -212,6 +212,7 @@ const coinSlice = createSlice({
           }
         }
       });
+      */
     },
 
     GET_REALTIME_TRADE_DATA_ERROR: (state, { payload: data }) => {
