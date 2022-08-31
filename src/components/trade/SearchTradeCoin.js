@@ -13,240 +13,54 @@ import useInterval from "../../utils/hooks/useInterval";
 import { cusAxios, getToken } from "../../utils/hooks/common/cusAxios";
 import axios from "axios";
 import request from "request";
-
+import { verify } from "crypto";
+import searchCoin from "../../utils/hooks/common/searchCoin";
+import ordersCoin from "../../utils/hooks/common/ordersCoin";
+const key = {
+  apiKey: "VnoQQa49yi0o39ve4nnlRMGWVauAHrP5jRMYkars",
+  secret: "wIUq0ROHbT50HCKDFgBvd2bf96GOqvjXd7PQzsOE",
+};
 function SearchTradeCoin() {
   const [searchOpened, setSearchOpened] = useState(false);
-  const [copyTradeCoin, setCopyTradeCoin] = useState([]);
   const dispatch = useDispatch();
-  const tradeCoin = useSelector(
-    (state) => state.coin.autoTradeSummaryData.data
-  );
-  const realtimeData = useSelector((state) => state.coin.realtimeData.data);
-  const autoTradeData = useSelector((state) => state.coin.autoTradeData.data);
-
-  useEffect(() => {
-    const param = {
-      key: {
-        apiKey: "VnoQQa49yi0o39ve4nnlRMGWVauAHrP5jRMYkars",
-        secret: "wIUq0ROHbT50HCKDFgBvd2bf96GOqvjXd7PQzsOE",
-      },
-    };
-
-    async function Call() {
-      const response = await axios.get("/api/v1/orders", {
-        headers: {
-          Authorization: getToken(param.key),
-          Accept: `application/json`,
-        },
-      });
-
-      response.data
-        .filter((x) => x.state === "wait")
-        .forEach((coin) => {
-          const body = {
-            uuid: coin.uuid,
-          };
-
-          const options = {
-            method: "DELETE",
-            url: "/api/v1/order",
-            headers: {
-              Accept: `application/json; charset=utf-8`,
-              "Content-Type": "application/json; charset=utf-8",
-              Authorization: getToken(param.key, body),
-            },
-            data: body,
-          };
-
-          new Promise((resolve, reject) => {
-            axios
-              .request(options)
-              .then(function (response) {
-                dispatch(REMOVE_AUTO_TRADE_DATA({ code: coin.uuid }));
-              })
-              .catch(function (error) {});
-          });
-        });
-    }
-
-    Call();
-
-    dispatch(CLEAR_AUTO_TRADE_DATA());
-  }, []);
-
-  useEffect(() => {
-    const ask_coin = [...autoTradeData].filter(
-      (x) =>
-        (x.realData[0]?.cnt > 100 &&
-          x.realData[0]?.ask_price / x.realData[0]?.total_price) *
-          100 >
-        70
-    );
-
-    ask_coin.forEach((x) => {
-      const coins_now_trade = [...realtimeData].filter(
-        (coin) => coin.code === x.code
-      );
-
-      const key = {
-        apiKey: "VnoQQa49yi0o39ve4nnlRMGWVauAHrP5jRMYkars",
-        secret: "wIUq0ROHbT50HCKDFgBvd2bf96GOqvjXd7PQzsOE",
-      };
-
-      const body = {
-        market: x.code,
-        side: "ask",
-        volume: x.trade_volume,
-        price: coins_now_trade[0].trade_price.toString(),
-        ord_type: "limit",
-      };
-
-      const options = {
-        method: "POST",
-        url: "/api/v1/orders",
-        headers: {
-          Accept: `application/json; charset=utf-8`,
-          "Content-Type": "application/json; charset=utf-8",
-          Authorization: getToken(key, body),
-        },
-        data: body,
-      };
-
-      new Promise((resolve, reject) => {
-        axios
-          .request(options)
-          .then(function (response) {
-            console.log(resolve(response));
-            dispatch(REMOVE_AUTO_TRADE_DATA({ code: x.code }));
-          })
-          .catch(function (error) {
-            console.log(resolve(error));
-            dispatch(REMOVE_AUTO_TRADE_DATA({ code: x.code }));
-          });
-      });
-    });
-  }, [autoTradeData]);
+  const markets = useSelector((state) => state.coin.market.data);
 
   useInterval(() => {
     const date = new Date();
-
     if (Number(date.getSeconds()) === 0) {
-      dispatch(CLEAR_AUTO_TRADE_SUMMARY_DATA());
-      dispatch(CLEAR_AUTO_TRADE_REAL_DATA());
       setSearchOpened(true);
-    }
 
-    if (Number(date.getSeconds()) === 20) {
-      const standardCnt =
-        (tradeCoin
-          .map((item) => item.cnt)
-          .reduce((prev, curr) => prev + curr, 0) *
-          20) /
-        (tradeCoin.length * 2);
-      console.log(standardCnt);
-
-      const searchCoins = tradeCoin.filter(
-        (data) =>
-          data.cnt > standardCnt &&
-          (data.bid_price / data.total_price) * 100 > 70
-      );
-
-      searchCoins.forEach((data) => {
-        if (autoTradeData.findIndex((x) => x.code === data.code) === -1) {
-          const coins_now_trade = realtimeData.filter(
-            (coin) => coin.code === data.code
+      async function Call() {
+        return await new Promise((resolve) => {
+          const coinSignal = searchCoin(
+            [...markets].filter((x) => x.market.includes("KRW"))
           );
 
-          const key = {
-            apiKey: "VnoQQa49yi0o39ve4nnlRMGWVauAHrP5jRMYkars",
-            secret: "wIUq0ROHbT50HCKDFgBvd2bf96GOqvjXd7PQzsOE",
-          };
+          resolve(coinSignal);
+        });
+      }
 
-          const body = {
-            market: coins_now_trade[0].code,
-            side: "bid",
-            volume: (
-              Math.floor((10000 / coins_now_trade[0].trade_price) * 100000000) /
-              100000000
-            )
-              .toFixed(8)
-              .toString(),
-            price: coins_now_trade[0].trade_price.toString(),
-            ord_type: "limit",
-          };
-
-          const options = {
-            method: "POST",
-            url: "/api/v1/orders",
-            headers: {
-              Accept: `application/json; charset=utf-8`,
-              "Content-Type": "application/json; charset=utf-8",
-              Authorization: getToken(key, body),
-            },
-            data: body,
-          };
-
-          new Promise((resolve, reject) => {
-            axios
-              .request(options)
-              .then(function (response) {
-                console.log(resolve(response));
-                dispatch(
-                  ADD_AUTO_TRADE_DATA({
-                    code: coins_now_trade[0].code,
-                    trade_price: coins_now_trade[0].trade_price,
-                    trade_volume: (
-                      Math.floor(
-                        (10000 / coins_now_trade[0].trade_price) * 100000000
-                      ) / 100000000
-                    )
-                      .toFixed(8)
-                      .toString(),
-                    total_trade_price: (
-                      coins_now_trade[0].trade_price *
-                      (
-                        Math.floor(
-                          (10000 / coins_now_trade[0].trade_price) * 100000000
-                        ) / 100000000
-                      ).toFixed(8)
-                    )
-                      .toFixed(8)
-                      .toString(),
-                    realData: [],
-                  })
-                );
-              })
-              .catch(function (error) {
-                console.log(resolve(error));
-                dispatch(
-                  ADD_AUTO_TRADE_DATA({
-                    code: coins_now_trade[0].code,
-                    trade_price: coins_now_trade[0].trade_price,
-                    trade_volume: (
-                      Math.floor(
-                        (10000 / coins_now_trade[0].trade_price) * 100000000
-                      ) / 100000000
-                    )
-                      .toFixed(8)
-                      .toString(),
-                    total_trade_price: (
-                      coins_now_trade[0].trade_price *
-                      (
-                        Math.floor(
-                          (10000 / coins_now_trade[0].trade_price) * 100000000
-                        ) / 100000000
-                      ).toFixed(8)
-                    )
-                      .toFixed(8)
-                      .toString(),
-                    realData: [],
-                  })
-                );
+      Call().then((result) => {
+        if (result.ask.length > 0 || result.bid.length > 0) {
+          function CallAccount() {
+            return new Promise(async (resolve) => {
+              const response = await axios.get("/api/v1/accounts", {
+                headers: {
+                  Authorization: getToken(key),
+                  Accept: `application/json`,
+                },
               });
+
+              resolve(response.data);
+            });
+          }
+
+          CallAccount().then((account) => {
+            ordersCoin(result, account);
+            setSearchOpened(false);
           });
         }
       });
-      setSearchOpened(false);
     }
   }, 1000);
 
