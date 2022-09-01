@@ -3,10 +3,10 @@ import { getToken } from "./cusAxios";
 
 let _key = {};
 
-export default function ordersCoin(key, coinSignal, account, onePrice) {
+export default function ordersCoin(key, coinSignal, onePrice, account = null) {
   _key = key;
 
-  coinSignal.bid.forEach((data) => {
+  coinSignal.bid?.forEach((data) => {
     const body = {
       market: data.code,
       side: "bid",
@@ -17,11 +17,11 @@ export default function ordersCoin(key, coinSignal, account, onePrice) {
       ord_type: "limit",
     };
 
-    orders(body);
+    orders(body, _key);
   });
 
-  coinSignal.ask.forEach((data) => {
-    const myCoin = account.filter((x) => data.code === "KRW-" + x.currency);
+  coinSignal.ask?.forEach((data) => {
+    const myCoin = account.filter((x) => data.code === x.code);
 
     if (myCoin.length > 0) {
       const body = {
@@ -32,19 +32,19 @@ export default function ordersCoin(key, coinSignal, account, onePrice) {
         ord_type: "limit",
       };
 
-      orders(body);
+      orders(body, _key);
     }
   });
 }
 
-function orders(body) {
+export function orders(body, keyy) {
   const options = {
     method: "POST",
     url: "/api/v1/orders",
     headers: {
       Accept: `application/json; charset=utf-8`,
       "Content-Type": "application/json; charset=utf-8",
-      Authorization: getToken(_key, body),
+      Authorization: getToken(keyy, body),
     },
     data: body,
   };
@@ -53,10 +53,10 @@ function orders(body) {
     axios
       .request(options)
       .then(function (response) {
-        success(console.log(response.data));
+        success(response.data);
       })
       .catch(function (error) {
-        success(console.log(error));
+        success(error);
       });
   });
 }

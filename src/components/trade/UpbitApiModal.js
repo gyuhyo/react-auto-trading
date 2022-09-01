@@ -1,4 +1,6 @@
 import {
+  Alert,
+  AlertTitle,
   Dialog,
   DialogActions,
   DialogContent,
@@ -135,6 +137,10 @@ export default function UpbitApiModal({ opened, setModalOpened }) {
             onChange={handleAuthChange}
             value={auth.secret}
           />
+          <Alert variant="filled" severity="error">
+            <AlertTitle>주의!!</AlertTitle>
+            자동매매 사용으로 인한 피해는 개발자가 책임지지 않습니다.
+          </Alert>
         </Stack>
       </DialogContent>
       <DialogActions>

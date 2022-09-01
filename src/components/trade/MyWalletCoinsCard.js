@@ -1,18 +1,24 @@
-import { CircularProgress, Divider, Paper, styled } from "@mui/material";
+import { Divider, Paper } from "@mui/material";
 import axios from "axios";
-import { forEach } from "lodash";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { CLEAR_MY_WALLETS, SET_MY_WALLETS } from "../../store/reducers/trading";
 import { getToken } from "../../utils/hooks/common/cusAxios";
+import { orders } from "../../utils/hooks/common/ordersCoin";
+import useInterval from "../../utils/hooks/useInterval";
+import MyWalletCoinsRow from "./MyWalletCoinsRow";
 
-export default function MyWalletCoinsCard() {
+function MyWalletCoinsCard() {
   const dispatch = useDispatch();
-  const wallets = useSelector((state) => state.trading.mywallet);
+  const trading = useSelector((state) => state.trading);
   const key = useSelector((state) => state.user.auth);
   const markets = useSelector((state) => state.coin.market.data);
 
-  useEffect(() => {
+  useInterval(() => {
+    CallWallet();
+  }, 60000);
+
+  function CallWallet() {
     dispatch(CLEAR_MY_WALLETS());
 
     async function CallAccount() {
@@ -42,17 +48,70 @@ export default function MyWalletCoinsCard() {
     }
 
     CallAccount();
-  }, []);
+  }
 
-  const CustomProgress = styled(CircularProgress)(({ theme }) => ({
-    height: "12px !important",
-    width: "12px !important",
-  }));
+  useEffect(() => {
+    if (trading.onStart) {
+      if (
+        trading.setting.autoAskType === "per" ||
+        trading.setting.autoAskType === "rsiPer"
+      ) {
+        const askCoins = [...trading.mywallet].filter(
+          (x) =>
+            ((x.now_price - x.avg_buy_price) / x.avg_buy_price) * 100 >
+              trading.setting.askUpPer ||
+            ((x.now_price - x.avg_buy_price) / x.avg_buy_price) * 100 <
+              trading.setting.askDownPer
+        );
+
+        if (askCoins.length > 0) {
+          async function CallOrdersCheck() {
+            const response = await axios.get("/api/v1/orders", {
+              headers: {
+                Authorization: getToken(key),
+                Accept: `application/json`,
+              },
+            });
+
+            const accounts = await axios.get("/api/v1/accounts", {
+              headers: {
+                Authorization: getToken(key),
+                Accept: `application/json`,
+              },
+            });
+
+            askCoins.forEach((c) => {
+              if (
+                accounts.data.filter((o) => "KRW-" + o.currency === c.code)
+                  .length <= 0 ||
+                response.data.filter(
+                  (o) => o.state === "wait" && o.market === c.code
+                ).length > 0
+              )
+                return;
+
+              const body = {
+                market: c.code,
+                side: "ask",
+                volume: c.balance,
+                price: c.now_price,
+                ord_type: "limit",
+              };
+
+              orders(body, key);
+            });
+          }
+
+          CallOrdersCheck();
+        }
+      }
+    }
+  }, [trading.mywallet]);
 
   return (
     <Paper elevation={3} className="p-1 flex-1 flex flex-col text-xs">
-      <div className="flex-1 flex flex-row text-center">
-        <p className="w-[20%]">코인명</p>
+      <div className="flex-1 flex flex-row text-right px-2">
+        <p className="w-[20%] text-left">코인명</p>
         <p className="w-[20%]">매수평균가</p>
         <p className="w-[20%]">보유수량</p>
         <p className="w-[20%]">매수금액</p>
@@ -61,49 +120,13 @@ export default function MyWalletCoinsCard() {
       </div>
       <Divider />
       <div className="overflow-auto max-h-[200px] flex-1 flex flex-col">
-        {wallets &&
-          wallets.map((data) => (
-            <div
-              key={data.code}
-              className="flex-1 flex flex-row text-right px-2"
-            >
-              <p className="w-[20%] text-left">{data.korean_name}</p>
-              <p className="w-[20%]">
-                {Number(
-                  Number(data.avg_buy_price).toFixed(
-                    data.avg_buy_price > 100 ? 0 : 5
-                  )
-                ).toLocaleString()}
-              </p>
-              <p className="w-[20%]">
-                {Number(Number(data.balance).toFixed(8)).toLocaleString()}
-              </p>
-              <p className="w-[20%]">
-                {Number(
-                  (data.balance * data.avg_buy_price).toFixed(0)
-                ).toLocaleString()}
-              </p>
-              <p className="w-[20%]">
-                {data.now_price === 0 ? (
-                  <CustomProgress color="inherit" disableShrink />
-                ) : (
-                  Math.floor(data.now_price * data.balance).toLocaleString()
-                )}
-              </p>
-              <p className="w-[12%]">
-                {data.now_price === 0 ? (
-                  <CustomProgress color="inherit" disableShrink />
-                ) : (
-                  Number(
-                    ((data.now_price - data.avg_buy_price) /
-                      data.avg_buy_price) *
-                      100
-                  ).toFixed(2)
-                )}
-              </p>
-            </div>
+        {trading.mywallet &&
+          trading.mywallet.map((data) => (
+            <MyWalletCoinsRow key={data.code} data={data} />
           ))}
       </div>
     </Paper>
   );
 }
+
+export default React.memo(MyWalletCoinsCard);

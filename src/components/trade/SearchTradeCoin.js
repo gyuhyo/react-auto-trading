@@ -35,34 +35,22 @@ function SearchTradeCoin() {
       }
 
       Call().then((result) => {
-        if (result.ask.length > 0 || result.bid.length > 0) {
-          function CallAccount() {
-            return new Promise(async (resolve) => {
-              const response = await axios.get("/api/v1/accounts", {
-                headers: {
-                  Authorization: getToken(key),
-                  Accept: `application/json`,
-                },
-              });
-
-              resolve(response.data);
-            });
+        if (result.bid.length > 0) {
+          ordersCoin(key, { bid: result.bid }, trading.setting.onePrice);
+        }
+        if (result.ask.length > 0) {
+          if (
+            trading.setting.autoAskType === "rsi" ||
+            trading.setting.autoAskType === "rsiPer"
+          ) {
+            ordersCoin(
+              key,
+              { ask: result.ask },
+              trading.setting.onePrice,
+              trading.mywallet
+            );
           }
-
-          CallAccount().then((account) => {
-            if (
-              trading.setting.autoAskType === "rsi" ||
-              trading.setting.autoAskType === "rsiPer"
-            ) {
-              ordersCoin(
-                key,
-                { bid: result.bid },
-                account,
-                trading.setting.onePrice
-              );
-            }
-            setSearchOpened(false);
-          });
+          setSearchOpened(false);
         }
       });
     }

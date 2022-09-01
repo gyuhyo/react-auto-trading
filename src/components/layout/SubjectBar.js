@@ -64,7 +64,19 @@ export default function SubjectBar({ text }) {
                 disabled={!apiKey || !secret ? true : false}
                 color="primary"
                 checked={trading}
-                onChange={(e) => dispatch(CHANGE_ON_START(e.target.checked))}
+                onChange={(e) => {
+                  if (
+                    e.target.checked &&
+                    !confirm(
+                      "자동매매 사용으로 인한 피해는 개발자가 책임지지 않습니다.\n\n동의하시면 [확인] 버튼을 클릭해주세요."
+                    )
+                  ) {
+                    e.preventDefault();
+                    return;
+                  }
+
+                  dispatch(CHANGE_ON_START(e.target.checked));
+                }}
               />
             }
             label="트레이딩 ON/OFF"

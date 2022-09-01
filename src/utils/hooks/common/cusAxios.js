@@ -11,7 +11,7 @@ export function getToken(key, body = null) {
 
   if (body) {
     const query = queryEncode(body);
-    console.log(query);
+
     const hash = crypto.createHash("sha512");
     const queryHash = hash.update(query, "utf-8").digest("hex");
 
@@ -21,8 +21,6 @@ export function getToken(key, body = null) {
       query_hash: queryHash,
       query_hash_alg: "SHA512",
     };
-
-    console.log(payload);
   } else {
     payload = {
       access_key: key.apiKey,

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export default function searchCoin(markets, rsi) {
+export default function searchCoin(markets, setRsi) {
   const result = {
     bid: [],
     ask: [],
@@ -70,7 +70,10 @@ export default function searchCoin(markets, rsi) {
             resultRsi["rsi" + term] = rsi[rsi.length - 2].toFixed(2);
           });
 
-          if (resultRsi.rsi14 >= rsi.rsiAsk && resultRsi.rsi28 >= rsi.rsiAsk) {
+          if (
+            resultRsi.rsi14 >= setRsi.rsiAsk &&
+            resultRsi.rsi28 >= setRsi.rsiAsk
+          ) {
             result.ask.push({
               code: v.market,
               price: parseFloat(closes[closes.length - 1]),
@@ -79,7 +82,10 @@ export default function searchCoin(markets, rsi) {
             });
           }
 
-          if (resultRsi.rsi14 <= rsi.rsiBid && resultRsi.rsi28 <= rsi.rsiBid) {
+          if (
+            resultRsi.rsi14 <= setRsi.rsiBid &&
+            resultRsi.rsi28 <= setRsi.rsiBid
+          ) {
             result.bid.push({
               code: v.market,
               price: parseFloat(closes[closes.length - 1]),

@@ -203,11 +203,11 @@ export default function TradingSettingModal({ opened, setModalOpened }) {
               size="small"
               className="w-[70px]"
               sx={{ "& .MuiInputBase-input": { textAlign: "center" } }}
-              value={setting.askDownPer}
+              value={setting.askDownPer * -1}
               onChange={(e) =>
                 setSetting((state) => ({
                   ...state,
-                  askDownPer: Number(e.target.value),
+                  askDownPer: Number(e.target.value) * -1,
                 }))
               }
             />{" "}
