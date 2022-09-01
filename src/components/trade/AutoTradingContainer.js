@@ -4,6 +4,7 @@ import UpbitApiModal from "./UpbitApiModal";
 import { useSelector, shallowEqual } from "react-redux";
 import SearchTradeCoin from "./SearchTradeCoin";
 import TradingSettingModal from "./TradingSettingModal";
+import MyWalletCoinsCard from "./MyWalletCoinsCard";
 
 function AutoTradingContainer() {
   const [modalOpened, setModalOpened] = useState(false);
@@ -63,6 +64,9 @@ function AutoTradingContainer() {
         setModalOpened={setModalOpened}
       />
       <SearchTradeCoin />
+      <div className="mt-3 flex flex-col gap-y-2">
+        <MyWalletCoinsCard />
+      </div>
     </div>
   );
 }

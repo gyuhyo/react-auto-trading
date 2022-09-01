@@ -1,16 +1,16 @@
 import axios from "axios";
 import { getToken } from "./cusAxios";
 
-let key = {};
+let _key = {};
 
-export default function ordersCoin(key, coinSignal, account) {
-  key = key;
+export default function ordersCoin(key, coinSignal, account, onePrice) {
+  _key = key;
 
   coinSignal.bid.forEach((data) => {
     const body = {
       market: data.code,
       side: "bid",
-      volume: (Math.floor((10000 / data.price) * 100000000) / 100000000)
+      volume: (Math.floor((onePrice / data.price) * 100000000) / 100000000)
         .toFixed(8)
         .toString(),
       price: data.price.toString(),
@@ -44,7 +44,7 @@ function orders(body) {
     headers: {
       Accept: `application/json; charset=utf-8`,
       "Content-Type": "application/json; charset=utf-8",
-      Authorization: getToken(key, body),
+      Authorization: getToken(_key, body),
     },
     data: body,
   };

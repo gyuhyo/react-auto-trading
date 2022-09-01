@@ -9,6 +9,7 @@ import {
   GET_REALTIME_TRADE_DATA_ERROR,
   GET_REALTIME_TRADE_DATA_SUCCESS,
 } from "../../store/reducers/coin";
+import { SET_MY_WALLETS_PRICE } from "../../store/reducers/trading";
 
 export default function useSocket() {
   const dispatch = useDispatch();
@@ -31,6 +32,7 @@ export default function useSocket() {
       const flush = () => {
         dispatch(GET_REALTIME_DATA_SUCCESS(Array.from(data)));
         dispatch(GET_REALTIME_TRADE_DATA_SUCCESS(Array.from(tradeData)));
+        dispatch(SET_MY_WALLETS_PRICE(Array.from(data)));
 
         data.clear();
         tradeData.clear();

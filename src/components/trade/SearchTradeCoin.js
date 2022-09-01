@@ -14,10 +14,10 @@ function SearchTradeCoin() {
   const dispatch = useDispatch();
   const markets = useSelector((state) => state.coin.market.data);
   const key = useSelector((state) => state.user.auth);
-  const trading = useSelector((state) => state.trading.onStart);
+  const trading = useSelector((state) => state.trading);
 
   useInterval(() => {
-    if (!trading) return;
+    if (!trading.onStart) return;
 
     const date = new Date();
     if (Number(date.getSeconds()) === 0) {
@@ -26,7 +26,8 @@ function SearchTradeCoin() {
       async function Call() {
         return await new Promise((resolve) => {
           const coinSignal = searchCoin(
-            [...markets].filter((x) => x.market.includes("KRW"))
+            [...markets].filter((x) => x.market.includes("KRW")),
+            { rsiBid: trading.setting.rsiBid, rsiAsk: trading.setting.rsiAsk }
           );
 
           resolve(coinSignal);
@@ -49,7 +50,17 @@ function SearchTradeCoin() {
           }
 
           CallAccount().then((account) => {
-            ordersCoin(key, result, account);
+            if (
+              trading.setting.autoAskType === "rsi" ||
+              trading.setting.autoAskType === "rsiPer"
+            ) {
+              ordersCoin(
+                key,
+                { bid: result.bid },
+                account,
+                trading.setting.onePrice
+              );
+            }
             setSearchOpened(false);
           });
         }
@@ -59,10 +70,13 @@ function SearchTradeCoin() {
 
   return (
     <Collapse in={searchOpened}>
-      <Paper elevation={2} className="mt-3 shadow-xl">
+      <Paper
+        elevation={2}
+        className="mt-3 shadow-xl absolute top-0 left-[calc(50vw_-_306px)] w-[613px] my-0 mx-auto"
+      >
         <div className="flex flex-row justify-between items-center p-3">
           <InfoIcon color="primary" fontSize="large" />
-          <Typography>매수 코인 검색중...</Typography>
+          <Typography>Searching Coins...</Typography>
         </div>
         <LinearProgress />
       </Paper>

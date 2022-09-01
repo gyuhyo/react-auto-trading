@@ -6,14 +6,19 @@ import {
   DialogTitle,
   Divider,
   IconButton,
+  Paper,
   Stack,
   styled,
   TextField,
+  ToggleButton,
+  ToggleButtonGroup,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import React, { useCallback, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import SaveIcon from "@mui/icons-material/Save";
+import { debounce } from "lodash";
+import { CHANGE_TRADE_SETTING } from "../../store/reducers/trading";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -51,11 +56,33 @@ const BootstrapDialogTitle = (props) => {
   );
 };
 
+const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
+  "& .MuiToggleButtonGroup-grouped": {
+    margin: theme.spacing(0.5),
+    border: 0,
+    "&.Mui-disabled": {
+      border: 0,
+    },
+    "&:not(:first-of-type)": {
+      borderRadius: theme.shape.borderRadius,
+    },
+    "&:first-of-type": {
+      borderRadius: theme.shape.borderRadius,
+    },
+  },
+}));
+
 export default function TradingSettingModal({ opened, setModalOpened }) {
   const dispatch = useDispatch();
+  const globalSetting = useSelector((state) => state.trading.setting);
+  const [setting, setSetting] = useState(globalSetting);
 
   const handleClose = () => {
     setModalOpened(false);
+  };
+
+  const handleSave = () => {
+    dispatch(CHANGE_TRADE_SETTING(setting));
   };
 
   return (
@@ -69,21 +96,122 @@ export default function TradingSettingModal({ opened, setModalOpened }) {
         AUTO TRADING SETTING
       </BootstrapDialogTitle>
       <DialogContent dividers>
-        <div className="flex flex-col gap-y-3 w-[600px]">
+        <div className="flex flex-col gap-y-3 w-[700px]">
           <div className="flex-1 flex flex-rows gap-x-3 items-center">
             <p className="w-[170px]">1회 매수 금액</p>
             <Divider size="small" orientation="vertical" flexItem />
-            <TextField size="small" />
+            <TextField
+              size="small"
+              className="w-[200px]"
+              autoFocus
+              value={setting.onePrice}
+              onChange={(e) =>
+                setSetting((state) => ({
+                  ...state,
+                  onePrice: Number(e.target.value),
+                }))
+              }
+            />
+            <p> 원</p>
           </div>
           <div className="flex-1 flex flex-rows gap-x-3 items-center">
             <p className="w-[170px]">RSI (매수 / 매도) 설정</p>
             <Divider size="small" orientation="vertical" flexItem />
-            <TextField size="small" />
+            <TextField
+              size="small"
+              className="w-[70px]"
+              sx={{ "& .MuiInputBase-input": { textAlign: "center" } }}
+              value={setting.rsiBid}
+              onChange={(e) =>
+                setSetting((state) => ({
+                  ...state,
+                  rsiBid: Number(e.target.value),
+                }))
+              }
+            />{" "}
+            <p>미만일 때 매수</p>
+            <TextField
+              size="small"
+              className="w-[70px]"
+              sx={{ "& .MuiInputBase-input": { textAlign: "center" } }}
+              value={setting.rsiAsk}
+              onChange={(e) =>
+                setSetting((state) => ({
+                  ...state,
+                  rsiAsk: Number(e.target.value),
+                }))
+              }
+            />
+            <p>초과일 때 매도</p>
           </div>
           <div className="flex-1 flex flex-rows gap-x-3 items-center">
             <p className="w-[170px]">자동 매도 방식</p>
             <Divider size="small" orientation="vertical" flexItem />
-            <TextField size="small" />
+            <Paper
+              elevation={0}
+              sx={{
+                display: "flex",
+                border: (theme) => `1px solid ${theme.palette.divider}`,
+                flexWrap: "wrap",
+              }}
+            >
+              <StyledToggleButtonGroup
+                size="small"
+                value={setting.autoAskType || "rsi"}
+                exclusive
+                onChange={(e) =>
+                  setSetting((state) => ({
+                    ...state,
+                    autoAskType: e.target.value,
+                  }))
+                }
+              >
+                <ToggleButton value="rsi">RSI 기준</ToggleButton>
+                <ToggleButton value="per">특정 수익률 기준</ToggleButton>
+                <ToggleButton value="rsiPer">
+                  RSI or 특정수익률 기준
+                </ToggleButton>
+                {/*<ToggleButton value="macd">RSI 범위 내 MACD CROSS</ToggleButton>*/}
+              </StyledToggleButtonGroup>
+            </Paper>
+          </div>
+          <div className="flex-1 flex flex-rows gap-x-3 items-center">
+            <p className="w-[170px]">익절 매도 설정</p>
+            <Divider size="small" orientation="vertical" flexItem />
+            <p>수익률</p>
+            {" ＋"}
+            <TextField
+              size="small"
+              className="w-[70px]"
+              sx={{ "& .MuiInputBase-input": { textAlign: "center" } }}
+              value={setting.askUpPer}
+              onChange={(e) =>
+                setSetting((state) => ({
+                  ...state,
+                  askUpPer: Number(e.target.value),
+                }))
+              }
+            />{" "}
+            <p> % 초과일 때 매도</p>
+          </div>
+          <div className="flex-1 flex flex-rows gap-x-3 items-center">
+            <p className="w-[170px]">손절 매도 설정</p>
+            <Divider size="small" orientation="vertical" flexItem />
+            <p>수익률</p>
+            {" －"}
+            <TextField
+              size="small"
+              className="w-[70px]"
+              sx={{ "& .MuiInputBase-input": { textAlign: "center" } }}
+              value={setting.askDownPer}
+              onChange={(e) =>
+                setSetting((state) => ({
+                  ...state,
+                  askDownPer: Number(e.target.value),
+                }))
+              }
+            />{" "}
+            <p> % 미만일 때 매도</p>
           </div>
         </div>
       </DialogContent>
@@ -93,6 +221,7 @@ export default function TradingSettingModal({ opened, setModalOpened }) {
           color="secondary"
           startIcon={<SaveIcon />}
           variant="contained"
+          onClick={handleSave}
         >
           저장
         </Button>

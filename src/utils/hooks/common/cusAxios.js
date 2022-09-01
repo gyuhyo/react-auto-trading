@@ -30,7 +30,7 @@ export function getToken(key, body = null) {
     };
   }
 
-  const token = sign(payload, key.secret);
+  const token = !key.apiKey || !key.secret ? null : sign(payload, key.secret);
 
   return `Bearer ${token}`;
 }
