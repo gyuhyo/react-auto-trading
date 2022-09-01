@@ -1,9 +1,20 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { AppBar, Paper, Toolbar, Typography } from "@mui/material";
-import { useSelector } from "react-redux";
+import {
+  AppBar,
+  FormControlLabel,
+  Paper,
+  Switch,
+  Toolbar,
+  Typography,
+} from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { CHANGE_ON_START } from "../../store/reducers/trading";
 
 export default function SubjectBar({ text }) {
   const realtimeData = useSelector((state) => state.coin.realtimeData.data);
+  const trading = useSelector((state) => state.trading.onStart);
+  const { apiKey, secret } = useSelector((state) => state.user.auth);
+  const dispatch = useDispatch();
 
   const todayData = useCallback(() => {
     let copyData = realtimeData && [...realtimeData];
@@ -45,6 +56,21 @@ export default function SubjectBar({ text }) {
         </Typography>
 
         {text === "실시간 체결 순위" && todayData()}
+        {text === "AUTO TRADING" && (
+          <FormControlLabel
+            value="트레이딩 ON/OFF"
+            control={
+              <Switch
+                disabled={!apiKey || !secret ? true : false}
+                color="primary"
+                checked={trading}
+                onChange={(e) => dispatch(CHANGE_ON_START(e.target.checked))}
+              />
+            }
+            label="트레이딩 ON/OFF"
+            labelPlacement="start"
+          />
+        )}
       </Toolbar>
     </AppBar>
   );

@@ -8,16 +8,17 @@ import axios from "axios";
 import request from "request";
 import searchCoin from "../../utils/hooks/common/searchCoin";
 import ordersCoin from "../../utils/hooks/common/ordersCoin";
-const key = {
-  apiKey: "VnoQQa49yi0o39ve4nnlRMGWVauAHrP5jRMYkars",
-  secret: "wIUq0ROHbT50HCKDFgBvd2bf96GOqvjXd7PQzsOE",
-};
+
 function SearchTradeCoin() {
   const [searchOpened, setSearchOpened] = useState(false);
   const dispatch = useDispatch();
   const markets = useSelector((state) => state.coin.market.data);
+  const key = useSelector((state) => state.user.auth);
+  const trading = useSelector((state) => state.trading.onStart);
 
   useInterval(() => {
+    if (!trading) return;
+
     const date = new Date();
     if (Number(date.getSeconds()) === 0) {
       setSearchOpened(true);
@@ -48,7 +49,7 @@ function SearchTradeCoin() {
           }
 
           CallAccount().then((account) => {
-            ordersCoin(result, account);
+            ordersCoin(key, result, account);
             setSearchOpened(false);
           });
         }

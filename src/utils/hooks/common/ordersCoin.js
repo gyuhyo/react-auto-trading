@@ -1,12 +1,11 @@
 import axios from "axios";
 import { getToken } from "./cusAxios";
 
-const key = {
-  apiKey: "VnoQQa49yi0o39ve4nnlRMGWVauAHrP5jRMYkars",
-  secret: "wIUq0ROHbT50HCKDFgBvd2bf96GOqvjXd7PQzsOE",
-};
+let key = {};
 
-export default function ordersCoin(coinSignal, account) {
+export default function ordersCoin(key, coinSignal, account) {
+  key = key;
+
   coinSignal.bid.forEach((data) => {
     const body = {
       market: data.code,

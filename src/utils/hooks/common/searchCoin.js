@@ -92,7 +92,7 @@ export default function searchCoin(markets) {
 
       setTimeout(() => {
         resolve();
-      }, 10000);
+      }, 3000);
     });
 
   return Call().then(() => {

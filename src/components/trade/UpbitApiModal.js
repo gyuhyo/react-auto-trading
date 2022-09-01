@@ -1,5 +1,4 @@
 import {
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
@@ -9,10 +8,15 @@ import {
   styled,
   TextField,
 } from "@mui/material";
+import LoadingButton from "@mui/lab/LoadingButton";
 import CloseIcon from "@mui/icons-material/Close";
 import React, { useCallback, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { LOGIN } from "../../store/reducers/user";
+import SaveIcon from "@mui/icons-material/Save";
+import SendIcon from "@mui/icons-material/Send";
+import { getToken } from "../../utils/hooks/common/cusAxios";
+import axios from "axios";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -49,6 +53,7 @@ const BootstrapDialogTitle = (props) => {
 
 export default function UpbitApiModal({ opened, setModalOpened }) {
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
 
   const userAuth = useSelector((state) => state.user.auth);
   const [auth, setAuth] = useState({
@@ -56,13 +61,13 @@ export default function UpbitApiModal({ opened, setModalOpened }) {
     secret: userAuth.secret,
   });
 
+  useEffect(() => {
+    setLoading(false);
+  }, [opened]);
+
   const handleClose = () => {
     setModalOpened(false);
   };
-
-  useEffect(() => {
-    console.log(opened);
-  }, [opened]);
 
   const handleAuthChange = (e) => {
     if (e.target.name === "apiKey") {
@@ -74,11 +79,32 @@ export default function UpbitApiModal({ opened, setModalOpened }) {
         return { ...prevState, secret: e.target.value };
       });
     }
-    console.log(auth);
   };
 
   const saveUserAuth = () => {
-    dispatch(LOGIN({ auth: auth }));
+    setLoading(true);
+    async function CheckAPIKey() {
+      try {
+        const response = await axios.get("/api/v1/accounts", {
+          headers: {
+            Authorization: getToken(auth),
+            Accept: `application/json`,
+          },
+        });
+
+        return response.data;
+      } catch (error) {
+        alert(error.response.data.error.message);
+        return false;
+      }
+    }
+
+    CheckAPIKey().then((result) => {
+      if (result) {
+        dispatch(LOGIN({ auth: auth }));
+        setModalOpened(false);
+      }
+    });
   };
 
   return (
@@ -112,7 +138,17 @@ export default function UpbitApiModal({ opened, setModalOpened }) {
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button onClick={saveUserAuth}>저장</Button>
+        <LoadingButton
+          size="small"
+          color="secondary"
+          startIcon={<SaveIcon />}
+          loading={loading}
+          loadingPosition="start"
+          variant="contained"
+          onClick={saveUserAuth}
+        >
+          저장
+        </LoadingButton>
       </DialogActions>
     </BootstrapDialog>
   );

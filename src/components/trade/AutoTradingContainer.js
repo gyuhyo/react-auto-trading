@@ -3,9 +3,11 @@ import React, { useCallback, useState } from "react";
 import UpbitApiModal from "./UpbitApiModal";
 import { useSelector, shallowEqual } from "react-redux";
 import SearchTradeCoin from "./SearchTradeCoin";
+import TradingSettingModal from "./TradingSettingModal";
 
 function AutoTradingContainer() {
   const [modalOpened, setModalOpened] = useState(false);
+  const [settingModalOpened, setSettingModalOpened] = useState(false);
   const { apiKey, secret } = useSelector(
     (state) => state.user.auth,
     shallowEqual
@@ -26,7 +28,7 @@ function AutoTradingContainer() {
               className={`font-bold mr-2 ${
                 !apiKey || !secret ? "hidden" : "block"
               }`}
-              onClick={() => setModalOpened(true)}
+              onClick={() => setSettingModalOpened(true)}
             >
               설정
             </Button>
@@ -51,8 +53,15 @@ function AutoTradingContainer() {
 
   return (
     <div className="p-3">
+      <TradingSettingModal
+        opened={settingModalOpened}
+        setModalOpened={setSettingModalOpened}
+      />
       <UpbitApiModal opened={modalOpened} setModalOpened={setModalOpened} />
-      <SignedUpbitApi setModalOpened={setModalOpened} />
+      <SignedUpbitApi
+        setSettingModalOpened={setSettingModalOpened}
+        setModalOpened={setModalOpened}
+      />
       <SearchTradeCoin />
     </div>
   );
