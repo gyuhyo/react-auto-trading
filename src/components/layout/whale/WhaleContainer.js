@@ -18,6 +18,7 @@ import OrderbookContainer from "./OrderbookContainer";
 import SummaryContainer from "./SummaryContainer";
 import UpbitWhaleAlertContainer from "./UpbitWhaleAlertContainer";
 import WhaleAlertContainer from "./WhaleAlertContainer";
+import Chart from "./../../trade/Chart";
 
 const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
   "& .MuiToggleButtonGroup-grouped": {
@@ -69,14 +70,18 @@ function WhaleContainer() {
 
   return (
     <div className="flex-1 grid grid-rows-2 auto-rows-[minmax(0, 0.5fr)] gap-y-5">
-      <Paper elevation={5} className="flex-1">
+      <Paper elevation={5} className="flex-1 h-[470px]">
         <SubjectBar text="실시간 체결 순위" />
+        <Chart Exchange="BTCUSDT" Ticker="BINANCE" />
+        {/*
         <Paper
           elevation={3}
           className={`p-3 z-[9999] border-0 border-b-2 border-[#e0e0e0] border-solid shadow-lg rounded-none text-right flex ${
             matches ? "flex-row" : "flex-col gap-y-3"
           } justify-between items-center`}
         >
+          
+          
           <Paper
             elevation={0}
             sx={{
@@ -135,6 +140,7 @@ function WhaleContainer() {
           </Paper>
         </Paper>
         <SummaryContainer sorted={sorted} clearTime={clearTime} />
+            */}
       </Paper>
       <div
         className={`${
