@@ -9,6 +9,7 @@ const initialState = {
     autoAskType: "per",
     askUpPer: 3,
     askDownPer: 100,
+    searchTime: "5",
   },
   mywallet: [],
 };

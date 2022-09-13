@@ -12,9 +12,11 @@ import ordersCoin from "../../utils/hooks/common/ordersCoin";
 function SearchTradeCoin() {
   const [searchOpened, setSearchOpened] = useState(false);
   const dispatch = useDispatch();
+  const realtimeData = useSelector((state) => state.coin.realtimeData.data);
   const markets = useSelector((state) => state.coin.market.data);
   const key = useSelector((state) => state.user.auth);
   const trading = useSelector((state) => state.trading);
+  const setting = useSelector((state) => state.trading.setting);
 
   useInterval(() => {
     if (!trading.onStart) return;
@@ -27,7 +29,8 @@ function SearchTradeCoin() {
         return await new Promise((resolve) => {
           const coinSignal = searchCoin(
             [...markets].filter((x) => x.market.includes("KRW")),
-            { rsiBid: trading.setting.rsiBid, rsiAsk: trading.setting.rsiAsk }
+            { rsiBid: trading.setting.rsiBid, rsiAsk: trading.setting.rsiAsk },
+            setting.searchTime
           );
 
           resolve(coinSignal);
@@ -35,8 +38,16 @@ function SearchTradeCoin() {
       }
 
       Call().then((result) => {
+        const okMarkets = [...realtimeData]
+          .sort((a, b) => b.acc_trade_price_24h - a.acc_trade_price_24h)
+          .slice(0, 20);
+
+        const bidList = result.bid.filter((x) =>
+          okMarkets.some((y) => x.code === y.code)
+        );
+
         if (result.bid.length > 0) {
-          ordersCoin(key, { bid: result.bid }, trading.setting.onePrice);
+          ordersCoin(key, { bid: bidList }, trading.setting.onePrice);
         }
         if (result.ask.length > 0) {
           if (

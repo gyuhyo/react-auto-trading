@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export default function searchCoin(markets, setRsi) {
+export default function searchCoin(markets, setRsi, time) {
   const result = {
     bid: [],
     ask: [],
@@ -16,9 +16,17 @@ export default function searchCoin(markets, setRsi) {
       for (const v of markets) {
         const CallAsyncAxios = () =>
           new Promise(async (success) => {
-            const response = await axios.get(
-              `https://crix-api-endpoint.upbit.com/v1/crix/candles/minutes/1?code=CRIX.UPBIT.${v.market}&count=400`
-            );
+            let url = "";
+            if (time === "1d") {
+              url = `https://crix-api-endpoint.upbit.com/v1/crix/candles/days?code=CRIX.UPBIT.${v.market}&count=400`;
+            } else if (time === "1w") {
+              url = `https://crix-api-endpoint.upbit.com/v1/crix/candles/weeks?code=CRIX.UPBIT.${v.market}&count=400`;
+            } else if (time === "1m") {
+              url = `https://crix-api-endpoint.upbit.com/v1/crix/candles/months?code=CRIX.UPBIT.${v.market}&count=400`;
+            } else {
+              url = `https://crix-api-endpoint.upbit.com/v1/crix/candles/minutes/${time}?code=CRIX.UPBIT.${v.market}&count=400`;
+            }
+            const response = await axios.get(url);
             success(response);
           });
 

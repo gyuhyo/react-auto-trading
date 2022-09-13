@@ -213,6 +213,43 @@ export default function TradingSettingModal({ opened, setModalOpened }) {
             />{" "}
             <p> % 미만일 때 매도</p>
           </div>
+          <div className="flex-1 flex flex-rows gap-x-3 items-center">
+            <p className="w-[170px]">탐색 기준 시간</p>
+            <Divider size="small" orientation="vertical" flexItem />
+            <Paper
+              elevation={0}
+              sx={{
+                display: "flex",
+                border: (theme) => `1px solid ${theme.palette.divider}`,
+                flexWrap: "wrap",
+              }}
+            >
+              <StyledToggleButtonGroup
+                size="small"
+                value={setting.searchTime || "5"}
+                exclusive
+                onChange={(e) =>
+                  setSetting((state) => ({
+                    ...state,
+                    searchTime: e.target.value,
+                  }))
+                }
+              >
+                <ToggleButton value="1">1분</ToggleButton>
+                <ToggleButton value="3">3분</ToggleButton>
+                <ToggleButton value="5">5분</ToggleButton>
+                <ToggleButton value="10">10분</ToggleButton>
+                <ToggleButton value="15">15분</ToggleButton>
+                <ToggleButton value="30">30분</ToggleButton>
+                <ToggleButton value="60">60분</ToggleButton>
+                <ToggleButton value="240">240분</ToggleButton>
+                <ToggleButton value="1d">1일</ToggleButton>
+                <ToggleButton value="1w">1주</ToggleButton>
+                <ToggleButton value="1m">1달</ToggleButton>
+                {/*<ToggleButton value="macd">RSI 범위 내 MACD CROSS</ToggleButton>*/}
+              </StyledToggleButtonGroup>
+            </Paper>
+          </div>
         </div>
       </DialogContent>
       <DialogActions>

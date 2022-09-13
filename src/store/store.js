@@ -35,11 +35,23 @@ const migrations = {
       },
     };
   },
+  5: (state) => {
+    return {
+      ...state,
+      trading: {
+        ...state.trading,
+        setting: {
+          ...state.trading.setting,
+          searchTime: "5",
+        },
+      },
+    };
+  },
 };
 
 const persistConfig = {
   key: "root",
-  version: 1,
+  version: 5,
   storage,
   stateReconciler: autoMergeLevel2,
   migrate: createMigrate(migrations, { debug: true }),

@@ -12,8 +12,23 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
+    const a = [
+      { name: "a", price: 100 },
+      { name: "b", price: 200 },
+      { name: "c", price: 300 },
+      { name: "d", price: 400 },
+      { name: "e", price: 500 },
+    ];
+
+    const b = [
+      { name: "b", price: 2000 },
+      { name: "e", price: 3000 },
+    ];
+
+    const result = a.filter((x) => b.some((y) => x.name === y.name));
+    console.log(result);
     router.push("/trading");
-  }, [dispatch]);
+  }, []);
 
   const count = useSelector((state) => state.counter.value);
   return (
