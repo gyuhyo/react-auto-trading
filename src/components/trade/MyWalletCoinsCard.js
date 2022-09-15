@@ -86,7 +86,10 @@ function MyWalletCoinsCard() {
                 accounts.data.filter((o) => "KRW-" + o.currency === c.code)
                   .length <= 0 ||
                 response.data.filter(
-                  (o) => o.state === "wait" && o.market === c.code
+                  (o) =>
+                    o.state === "wait" &&
+                    o.side === "ask" &&
+                    o.market === c.code
                 ).length > 0
               )
                 return;
