@@ -25,10 +25,32 @@ function SearchTradeCoin() {
     if (Number(date.getSeconds()) === 0) {
       setSearchOpened(true);
 
+      let account;
+
       async function Call() {
-        return await new Promise((resolve) => {
+        return await new Promise(async (resolve) => {
+          account = await axios.get("/api/v1/accounts", {
+            headers: {
+              Authorization: getToken(key),
+              Accept: `application/json`,
+            },
+          });
+
+          const okMarkets = [...realtimeData]
+            .sort((a, b) => b.acc_trade_price_24h - a.acc_trade_price_24h)
+            .slice(0, 20)
+            .map((x) => x.code);
+
+          const acc = account.data
+            .map((x) => {
+              if (x.currency != "KRW") return "KRW-" + x.currency;
+            })
+            .filter((x) => x !== undefined);
+
+          const result = [...new Set([...acc, ...okMarkets])];
+
           const coinSignal = searchCoin(
-            [...markets].filter((x) => x.market.includes("KRW")),
+            result,
             { rsiBid: trading.setting.rsiBid, rsiAsk: trading.setting.rsiAsk },
             setting.searchTime
           );
@@ -38,23 +60,8 @@ function SearchTradeCoin() {
       }
 
       Call().then((result) => {
-        const okMarkets = [...realtimeData]
-          .sort((a, b) => b.acc_trade_price_24h - a.acc_trade_price_24h)
-          .slice(0, 20);
-
-        const bidList = result.bid.filter((x) =>
-          okMarkets.some((y) => x.code === y.code)
-        );
-
         if (result.bid.length > 0) {
           (async () => {
-            const account = await axios.get("/api/v1/accounts", {
-              headers: {
-                Authorization: getToken(key),
-                Accept: `application/json`,
-              },
-            });
-
             const orders = await axios.get("/api/v1/orders", {
               headers: {
                 Authorization: getToken(key),
@@ -74,6 +81,7 @@ function SearchTradeCoin() {
             const krw = coins.filter((x) => x.code === "KRW-KRW");
             let result = [];
             coins
+              .filter((x) => x.code !== "KRW-KRW")
               .slice(
                 0,
                 Math.floor(
@@ -81,8 +89,6 @@ function SearchTradeCoin() {
                 )
               )
               .forEach((x) => {
-                if (x.code === "KRW-KRW") return;
-
                 let size = x.price;
 
                 for (var i = 1; i >= 0.96; i -= 0.01) {

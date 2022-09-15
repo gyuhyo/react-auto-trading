@@ -17,19 +17,19 @@ export default function searchCoin(markets, setRsi, time) {
 
   const Call = () =>
     new Promise(async (resolve) => {
-      for (const v of markets) {
+      for (const market of markets) {
         sleep(530).then(() => {
           const CallAsyncAxios = () =>
             new Promise(async (success) => {
               let url = "";
               if (time === "1d") {
-                url = `https://crix-api-endpoint.upbit.com/v1/crix/candles/days?code=CRIX.UPBIT.${v.market}&count=400`;
+                url = `https://crix-api-endpoint.upbit.com/v1/crix/candles/days?code=CRIX.UPBIT.${market}&count=400`;
               } else if (time === "1w") {
-                url = `https://crix-api-endpoint.upbit.com/v1/crix/candles/weeks?code=CRIX.UPBIT.${v.market}&count=400`;
+                url = `https://crix-api-endpoint.upbit.com/v1/crix/candles/weeks?code=CRIX.UPBIT.${market}&count=400`;
               } else if (time === "1m") {
-                url = `https://crix-api-endpoint.upbit.com/v1/crix/candles/months?code=CRIX.UPBIT.${v.market}&count=400`;
+                url = `https://crix-api-endpoint.upbit.com/v1/crix/candles/months?code=CRIX.UPBIT.${market}&count=400`;
               } else {
-                url = `https://crix-api-endpoint.upbit.com/v1/crix/candles/minutes/${time}?code=CRIX.UPBIT.${v.market}&count=400`;
+                url = `https://crix-api-endpoint.upbit.com/v1/crix/candles/minutes/${time}?code=CRIX.UPBIT.${market}&count=400`;
               }
               const response = await axios.get(url);
               success(response);
@@ -90,7 +90,7 @@ export default function searchCoin(markets, setRsi, time) {
               resultRsi.rsi28 >= setRsi.rsiAsk
             ) {
               result.ask.push({
-                code: v.market,
+                code: market,
                 price: parseFloat(closes[closes.length - 1]),
                 rsi14: resultRsi.rsi14,
                 rsi28: resultRsi.rsi28,
@@ -102,7 +102,7 @@ export default function searchCoin(markets, setRsi, time) {
               resultRsi.rsi28 <= setRsi.rsiBid
             ) {
               result.bid.push({
-                code: v.market,
+                code: market,
                 price: parseFloat(closes[closes.length - 1]),
                 rsi14: resultRsi.rsi14,
                 rsi28: resultRsi.rsi28,
