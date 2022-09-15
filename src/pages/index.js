@@ -15,31 +15,31 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    //router.push("/trading");
+    router.push("/trading");
 
-    (async () => {
-      const account = await axios.get("/api/v1/accounts", {
-        headers: {
-          Authorization: getToken(key),
-          Accept: `application/json`,
-        },
-      });
+    // (async () => {
+    //   const account = await axios.get("/api/v1/accounts", {
+    //     headers: {
+    //       Authorization: getToken(key),
+    //       Accept: `application/json`,
+    //     },
+    //   });
 
-      const okMarkets = [...realtimeData]
-        .sort((a, b) => b.acc_trade_price_24h - a.acc_trade_price_24h)
-        .slice(0, 20)
-        .map((x) => x.code);
+    //   const okMarkets = [...realtimeData]
+    //     .sort((a, b) => b.acc_trade_price_24h - a.acc_trade_price_24h)
+    //     .slice(0, 20)
+    //     .map((x) => x.code);
 
-      const acc = account.data
-        .map((x) => {
-          if (x.currency != "KRW") return "KRW-" + x.currency;
-        })
-        .filter((x) => x !== undefined);
+    //   const acc = account.data
+    //     .map((x) => {
+    //       if (x.currency != "KRW") return "KRW-" + x.currency;
+    //     })
+    //     .filter((x) => x !== undefined);
 
-      const result = [...new Set([...acc, ...okMarkets])];
+    //   const result = [...new Set([...acc, ...okMarkets])];
 
-      console.log(result);
-    })();
+    //   console.log(result);
+    // })();
   }, []);
 
   const count = useSelector((state) => state.counter.value);
