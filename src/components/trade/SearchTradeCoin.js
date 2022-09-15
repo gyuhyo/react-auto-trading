@@ -37,6 +37,12 @@ function SearchTradeCoin() {
           });
 
           const okMarkets = [...realtimeData]
+            .filter(
+              (x) =>
+                !["KRW-BTC", "KRW-ETH", "KRW-XRP", "KRW-SOL", "KRW-ADA"].some(
+                  (y) => x.code === y
+                )
+            )
             .sort((a, b) => b.acc_trade_price_24h - a.acc_trade_price_24h)
             .slice(0, setting.coinTop)
             .map((x) => x.code);
@@ -72,30 +78,25 @@ function SearchTradeCoin() {
             const acc = account.data.map((x) => "KRW-" + x.currency);
             const ord = orders.data.map((x) => x.market);
 
-            const coins = bidList
+            const coins = result.bid
               .map((x) => {
                 if (![...acc, ...ord].includes(x.code)) return x;
               })
               .filter((x) => x !== undefined);
 
-            const krw = coins.filter((x) => x.code === "KRW-KRW");
-            let result = [];
+            const krw = account.data.filter((x) => x.currency === "KRW")[0];
+            let bidData = [];
             coins
-              .filter((x) => x.code !== "KRW-KRW")
               .slice(
                 0,
                 Math.floor(
-                  krw.price /
-                    (coins.length -
-                      1 *
-                        trading.setting.onePrice *
-                        (trading.setting.askDownPer * -1))
+                  Number(krw.balance) /
+                    (setting.onePrice * (setting.askDownPer * -1))
                 )
               )
               .forEach((x) => {
                 let size = x.price;
-                const warterSize =
-                  1 - (trading.setting.askDownPer * -1 - 1) * 0.01;
+                const warterSize = 1 - (setting.askDownPer * -1 - 1) * 0.01;
                 for (var i = 1; i >= warterSize; i -= 0.01) {
                   const prevSize = size;
                   size = prevSize * i;
@@ -106,12 +107,11 @@ function SearchTradeCoin() {
                   } else {
                     size = size.toFixed(4);
                   }
-                  result.push({ code: x.code, price: size });
-                  size = (size + prevSize) / 2;
+                  bidData.push({ code: x.code, price: Number(size) });
+                  size = (Number(size) + prevSize) / 2;
                 }
               });
-
-            ordersCoin(key, { bid: result }, trading.setting.onePrice);
+            ordersCoin(key, { bid: bidData }, trading.setting.onePrice);
           })();
         }
         if (result.ask.length > 0) {

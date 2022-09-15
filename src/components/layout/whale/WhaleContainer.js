@@ -46,14 +46,6 @@ function WhaleContainer() {
   const markets = useSelector((state) => state.coin.market.data);
 
   useEffect(() => {
-    setKrwMarkets(
-      [...markets]
-        .filter((x) => x.market.includes("KRW"))
-        .map((x) => {
-          return `UPBIT:${x.market.replace("KRW-", "")}KRW`;
-        })
-    );
-
     const startClearTimer = setInterval(() => {
       //dispatch(CLEAR_SUMMARY_DATA());
 
@@ -82,7 +74,7 @@ function WhaleContainer() {
     <div className="flex-1 grid grid-rows-2 auto-rows-[minmax(0, 0.5fr)] gap-y-5">
       <Paper elevation={5} className="flex-1 h-[450px]">
         <SubjectBar text="Chart" />
-        <Chart watchList={krwMarkets} />
+        <Chart watchList={null} />
         {/*
         <Paper
           elevation={3}
