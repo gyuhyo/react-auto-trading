@@ -10,7 +10,7 @@ import {
   useTheme,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { CLEAR_SUMMARY_DATA } from "../../../store/reducers/coin";
 import AutoTradingContainer from "../../trade/AutoTradingContainer";
 import SubjectBar from "../SubjectBar";
@@ -40,10 +40,20 @@ function WhaleContainer() {
   const dispatch = useDispatch();
   const [sorted, setSorted] = useState("total_cnt");
   const [clearTime, setClearTime] = useState(1);
+  const [krwMarkets, setKrwMarkets] = useState([]);
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("sm"));
+  const markets = useSelector((state) => state.coin.market.data);
 
   useEffect(() => {
+    setKrwMarkets(
+      [...markets]
+        .filter((x) => x.market.includes("KRW"))
+        .map((x) => {
+          return `UPBIT:${x.market.replace("KRW-", "")}KRW`;
+        })
+    );
+
     const startClearTimer = setInterval(() => {
       //dispatch(CLEAR_SUMMARY_DATA());
 
@@ -70,9 +80,9 @@ function WhaleContainer() {
 
   return (
     <div className="flex-1 grid grid-rows-2 auto-rows-[minmax(0, 0.5fr)] gap-y-5">
-      <Paper elevation={5} className="flex-1 h-[470px]">
-        <SubjectBar text="실시간 체결 순위" />
-        <Chart Exchange="BTCUSDT" Ticker="BINANCE" />
+      <Paper elevation={5} className="flex-1 h-[450px]">
+        <SubjectBar text="Chart" />
+        <Chart watchList={krwMarkets} />
         {/*
         <Paper
           elevation={3}
@@ -142,24 +152,18 @@ function WhaleContainer() {
         <SummaryContainer sorted={sorted} clearTime={clearTime} />
             */}
       </Paper>
-      <div
-        className={`${
-          matches
-            ? "grid-cols-3"
-            : "grid-cols-[repeat(auto-fill, minmax(0, 1fr))]"
-        } grid gap-5 max-h-[336px]`}
-      >
-        <Paper elevation={5}>
+      <div className={`grid-cols-3 grid gap-5 max-h-[375px] mt-14`}>
+        <Paper elevation={5} className="max-h-[375px]">
           <SubjectBar text="AUTO TRADING" />
           {/*<WhaleAlertContainer />*/}
           <AutoTradingContainer />
         </Paper>
-        <Paper elevation={5}>
+        <Paper elevation={5} className="max-h-[375px]">
           <SubjectBar text="ORDER BOOK" />
           {/*<WhaleAlertContainer />*/}
           <OrderbookContainer />
         </Paper>
-        <Paper elevation={5}>
+        <Paper elevation={5} className="max-h-[375px]">
           <SubjectBar text="업비트 고래 알리미" />
           <UpbitWhaleAlertContainer />
         </Paper>

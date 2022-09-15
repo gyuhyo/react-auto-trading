@@ -55,7 +55,7 @@ export default function SubjectBar({ text }) {
           {text}
         </Typography>
 
-        {text === "실시간 체결 순위" && todayData()}
+        {text === "Chart" && todayData()}
         {text === "AUTO TRADING" && (
           <FormControlLabel
             value="트레이딩 ON/OFF"

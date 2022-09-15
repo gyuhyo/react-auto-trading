@@ -47,7 +47,61 @@ function SearchTradeCoin() {
         );
 
         if (result.bid.length > 0) {
-          ordersCoin(key, { bid: bidList }, trading.setting.onePrice);
+          (async () => {
+            const account = await axios.get("/api/v1/accounts", {
+              headers: {
+                Authorization: getToken(key),
+                Accept: `application/json`,
+              },
+            });
+
+            const orders = await axios.get("/api/v1/orders", {
+              headers: {
+                Authorization: getToken(key),
+                Accept: `application/json`,
+              },
+            });
+
+            const acc = account.data.map((x) => "KRW-" + x.currency);
+            const ord = orders.data.map((x) => x.market);
+
+            const coins = bidList
+              .map((x) => {
+                if (![...acc, ...ord].includes(x.code)) return x;
+              })
+              .filter((x) => x !== undefined);
+
+            const krw = coins.filter((x) => x.code === "KRW-KRW");
+            let result = [];
+            coins
+              .slice(
+                0,
+                Math.floor(
+                  krw.price / (coins.length - 1 * trading.setting.onePrice)
+                )
+              )
+              .forEach((x) => {
+                if (x.code === "KRW-KRW") return;
+
+                let size = x.price;
+
+                for (var i = 1; i >= 0.96; i -= 0.01) {
+                  const prevSize = size;
+                  size = prevSize * i;
+                  if (size >= 100) {
+                    size = size.toFixed(0);
+                  } else if (size >= 1) {
+                    size = size.toFixed(2);
+                  } else {
+                    size = size.toFixed(4);
+                  }
+                  result.push({ code: x.code, price: size });
+                  size = (size + prevSize) / 2;
+                }
+              });
+
+            ordersCoin(key, { bid: result }, trading.setting.onePrice);
+          })();
         }
         if (result.ask.length > 0) {
           if (

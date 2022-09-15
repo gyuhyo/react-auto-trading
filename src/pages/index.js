@@ -1,33 +1,67 @@
 import Head from "next/head";
-import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";
 import styles from "../styles/Home.module.css";
 import { increment, decrement } from "../store/reducers/counter";
 import { useEffect } from "react";
-import { CONNECT } from "../store/reducers/coin";
 import { useRouter } from "next/router";
+import axios from "axios";
+import { getToken } from "../utils/hooks/common/cusAxios";
 
 export default function Home() {
   const dispatch = useDispatch();
+  const key = useSelector((state) => state.user.auth);
   const router = useRouter();
 
   useEffect(() => {
-    const a = [
-      { name: "a", price: 100 },
-      { name: "b", price: 200 },
-      { name: "c", price: 300 },
-      { name: "d", price: 400 },
-      { name: "e", price: 500 },
+    //router.push("/trading");
+
+    const test = [
+      { code: "KRW-DOGE", price: 1000 },
+      { code: "KRW-BTC", price: 2000 },
+      { code: "KRW-ETH", price: 3000 },
+      { code: "KRW-COS", price: 4000 },
     ];
 
-    const b = [
-      { name: "b", price: 2000 },
-      { name: "e", price: 3000 },
-    ];
+    (async () => {
+      const account = await axios.get("/api/v1/accounts", {
+        headers: {
+          Authorization: getToken(key),
+          Accept: `application/json`,
+        },
+      });
 
-    const result = a.filter((x) => b.some((y) => x.name === y.name));
-    console.log(result);
-    router.push("/trading");
+      const orders = await axios.get("/api/v1/orders", {
+        headers: {
+          Authorization: getToken(key),
+          Accept: `application/json`,
+        },
+      });
+
+      const acc = account.data
+        .filter((x) => x.currency !== "KRW")
+        .map((x) => "KRW-" + x.currency);
+      const ord = orders.data.map((x) => x.market);
+
+      const coins = test
+        .map((x) => {
+          if (![...acc, ...ord].includes(x.code)) return x;
+        })
+        .filter((x) => x !== undefined);
+
+      let result = [];
+      coins.forEach((x) => {
+        let size = x.price;
+
+        for (var i = 1; i >= 0.96; i -= 0.01) {
+          const prevSize = size;
+          size = prevSize * i;
+          result.push({ code: x.code, price: size });
+          size = (size + prevSize) / 2;
+        }
+      });
+
+      console.log(result);
+    })();
   }, []);
 
   const count = useSelector((state) => state.counter.value);
