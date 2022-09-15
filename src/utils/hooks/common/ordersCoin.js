@@ -3,10 +3,14 @@ import { getToken } from "./cusAxios";
 
 let _key = {};
 
+function sleep() {
+  return new Promise((r) => setTimeout(r, 300));
+}
+
 export default function ordersCoin(key, coinSignal, onePrice, account = null) {
   _key = key;
 
-  coinSignal.bid?.forEach((data) => {
+  for (let data in coinSignal.bid) {
     const body = {
       market: data.code,
       side: "bid",
@@ -18,7 +22,8 @@ export default function ordersCoin(key, coinSignal, onePrice, account = null) {
     };
 
     orders(body, _key);
-  });
+    sleep();
+  }
 
   coinSignal.ask?.forEach((data) => {
     const myCoin = account.filter((x) => data.code === x.code);
