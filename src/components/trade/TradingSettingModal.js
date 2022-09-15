@@ -83,6 +83,7 @@ export default function TradingSettingModal({ opened, setModalOpened }) {
 
   const handleSave = () => {
     dispatch(CHANGE_TRADE_SETTING(setting));
+    setModalOpened(false);
   };
 
   return (
