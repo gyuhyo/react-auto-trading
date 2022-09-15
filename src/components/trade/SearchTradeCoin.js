@@ -22,7 +22,7 @@ function SearchTradeCoin() {
     if (!trading.onStart) return;
 
     const date = new Date();
-    if (Number(date.getSeconds()) === 0) {
+    if (Number(date.getSeconds()) === 0 || Number(date.getSeconds()) === 30) {
       setSearchOpened(true);
 
       let account;

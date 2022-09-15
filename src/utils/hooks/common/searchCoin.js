@@ -126,13 +126,11 @@ export default function searchCoin(markets, setRsi, time) {
       }
 
       await setTimeout(() => {
-        console.log("search finish");
         resolve();
-      }, 3000);
+      }, 1500);
     });
 
   return Call().then(() => {
-    console.log("return", result);
     return result;
   });
 }
