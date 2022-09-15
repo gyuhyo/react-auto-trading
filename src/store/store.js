@@ -18,6 +18,7 @@ import {
   REGISTER,
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
+import storageSession from "redux-persist/lib/storage/session";
 import autoMergeLevel2 from "redux-persist/lib/stateReconciler/autoMergeLevel2";
 import createMigrate from "redux-persist/lib/createMigrate";
 
@@ -52,7 +53,7 @@ const migrations = {
 const persistConfig = {
   key: "root",
   version: 5,
-  storage,
+  storage: storageSession,
   stateReconciler: autoMergeLevel2,
   migrate: createMigrate(migrations, { debug: true }),
 };
