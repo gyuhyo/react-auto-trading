@@ -38,8 +38,8 @@ function MyWalletCoinsCard() {
               korean_name: markets.filter(
                 (m) => m.market === "KRW-" + coin.currency
               )[0].korean_name,
-              avg_buy_price: coin.avg_buy_price,
-              balance: coin.balance,
+              avg_buy_price: Number(coin.avg_buy_price),
+              balance: Number(coin.balance),
               bid_price: coin.balance * coin.avg_buy_price,
               now_price: 0,
             })
@@ -58,10 +58,11 @@ function MyWalletCoinsCard() {
       ) {
         const askCoins = [...trading.mywallet].filter(
           (x) =>
-            ((x.now_price - x.avg_buy_price) / x.avg_buy_price) * 100 >
+            x.now_price > 0 &&
+            (((x.now_price - x.avg_buy_price) / x.avg_buy_price) * 100 >
               trading.setting.askUpPer ||
-            ((x.now_price - x.avg_buy_price) / x.avg_buy_price) * 100 <
-              trading.setting.askDownPer
+              ((x.now_price - x.avg_buy_price) / x.avg_buy_price) * 100 <
+                trading.setting.askDownPer)
         );
 
         if (askCoins.length > 0) {
