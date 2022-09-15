@@ -38,7 +38,7 @@ function SearchTradeCoin() {
 
           const okMarkets = [...realtimeData]
             .sort((a, b) => b.acc_trade_price_24h - a.acc_trade_price_24h)
-            .slice(0, 20)
+            .slice(0, setting.coinTop)
             .map((x) => x.code);
 
           const acc = account.data

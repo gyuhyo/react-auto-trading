@@ -145,6 +145,23 @@ export default function TradingSettingModal({ opened, setModalOpened }) {
             <p>초과일 때 매도</p>
           </div>
           <div className="flex-1 flex flex-rows gap-x-3 items-center">
+            <p className="w-[170px]">매수 검색 거래량 상위</p>
+            <Divider size="small" orientation="vertical" flexItem />
+            <TextField
+              size="small"
+              className="w-[200px]"
+              autoFocus
+              value={setting.coinTop || 20}
+              onChange={(e) =>
+                setSetting((state) => ({
+                  ...state,
+                  coinTop: Number(e.target.value),
+                }))
+              }
+            />
+            <p> 개</p>
+          </div>
+          <div className="flex-1 flex flex-rows gap-x-3 items-center">
             <p className="w-[170px]">자동 매도 방식</p>
             <Divider size="small" orientation="vertical" flexItem />
             <Paper

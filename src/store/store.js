@@ -48,11 +48,23 @@ const migrations = {
       },
     };
   },
+  6: (state) => {
+    return {
+      ...state,
+      trading: {
+        ...state.trading,
+        setting: {
+          ...state.trading.setting,
+          coinTop: 20,
+        },
+      },
+    };
+  },
 };
 
 const persistConfig = {
   key: "root",
-  version: 5,
+  version: 6,
   storage: storageSession,
   stateReconciler: autoMergeLevel2,
   migrate: createMigrate(migrations, { debug: true }),

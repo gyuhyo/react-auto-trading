@@ -11,14 +11,27 @@ export default function searchCoin(markets, setRsi, time) {
     rsi28: 0,
   };
 
-  function sleep(ms) {
+  function sleep() {
+    let ms = 0;
+
+    if (markets.length >= 100) {
+      ms = 200;
+    } else if (markets.length >= 70) {
+      ms = 215;
+    } else if (markets.length >= 50) {
+      ms = 200;
+    } else if (markets.length >= 30) {
+      ms = 230;
+    } else {
+      ms = 200;
+    }
     return new Promise((r) => setTimeout(r, ms));
   }
 
   const Call = () =>
     new Promise(async (resolve) => {
       for (const market of markets) {
-        await sleep(250).then(() => {
+        await sleep().then(() => {
           const CallAsyncAxios = () =>
             new Promise(async (success) => {
               let url = "";

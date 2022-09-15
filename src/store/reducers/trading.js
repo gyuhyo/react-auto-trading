@@ -10,6 +10,7 @@ const initialState = {
     askUpPer: 3,
     askDownPer: 100,
     searchTime: "5",
+    coinTop: 20,
   },
   mywallet: [],
 };
