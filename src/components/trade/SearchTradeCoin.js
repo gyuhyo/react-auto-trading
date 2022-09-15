@@ -85,13 +85,18 @@ function SearchTradeCoin() {
               .slice(
                 0,
                 Math.floor(
-                  krw.price / (coins.length - 1 * trading.setting.onePrice)
+                  krw.price /
+                    (coins.length -
+                      1 *
+                        trading.setting.onePrice *
+                        (trading.setting.askDownPer * -1))
                 )
               )
               .forEach((x) => {
                 let size = x.price;
-
-                for (var i = 1; i >= 0.96; i -= 0.01) {
+                const warterSize =
+                  1 - (trading.setting.askDownPer * -1 - 1) * 0.01;
+                for (var i = 1; i >= warterSize; i -= 0.01) {
                   const prevSize = size;
                   size = prevSize * i;
                   if (size >= 100) {
@@ -121,8 +126,9 @@ function SearchTradeCoin() {
               trading.mywallet
             );
           }
-          setSearchOpened(false);
         }
+
+        setSearchOpened(false);
       });
     }
   }, 1000);
