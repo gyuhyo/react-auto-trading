@@ -18,7 +18,7 @@ export default function searchCoin(markets, setRsi, time) {
   const Call = () =>
     new Promise(async (resolve) => {
       for (const market of markets) {
-        sleep(530).then(() => {
+        await sleep(250).then(() => {
           const CallAsyncAxios = () =>
             new Promise(async (success) => {
               let url = "";
@@ -112,12 +112,14 @@ export default function searchCoin(markets, setRsi, time) {
         });
       }
 
-      setTimeout(() => {
+      await setTimeout(() => {
+        console.log("search finish");
         resolve();
       }, 3000);
     });
 
   return Call().then(() => {
+    console.log("return", result);
     return result;
   });
 }
